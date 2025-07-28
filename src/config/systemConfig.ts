@@ -4,13 +4,12 @@ import path from "path";
 dotenv.config({ path: path.resolve(process.cwd(), `.env`) });
 
 export const systemConfig = {
-  jwtSecret: process.env.JWT_SECRET || "kumele_secret_79097",
+  jwtSecret: process.env.JWT_SECRET,
   jwtExpiration: process.env.JWT_EXPIRATION || "100d",
   bcryptSaltRounds: Number(process.env.BCRYPT_SALT_ROUNDS) || 10,
   emailConfig: {
     domain: process.env.EMAIL_DOMAIN || "",
-    apiKey:
-      process.env.EMAIL_API_KEY,
+    apiKey: process.env.EMAIL_API_KEY,
     email_sender_domain_email:
       process.env.EMAIL_SENDER_DOMAIN_EMAIL || "gihanpiumal7@gmail.com",
   },
