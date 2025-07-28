@@ -1,6 +1,18 @@
 export interface User {
-  id: number;
-  name: string;
+  ID: string;
+  fullName: string;
   email: string;
-  // Add more fields as per your table schema
+  password: string;
+  gender: string;
+  language: string;
+  dateOfBirth: string;
+  referralCode: string;
+  aboveLegalAge: boolean;
+  termsAndConditionsAccepted: boolean;
+  subscribedToNewsletter: boolean;
+}
+
+export interface IdGenerator {
+  code: string;
+  seq: number;
 }

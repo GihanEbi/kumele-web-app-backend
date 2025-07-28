@@ -3,10 +3,17 @@ import { pool } from "../config/db";
 const createUserTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS users (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(100) NOT NULL,
+      ID VARCHAR(10) PRIMARY KEY,
+      fullName VARCHAR(100) NOT NULL,
       email VARCHAR(100) NOT NULL UNIQUE,
       password VARCHAR(100) NOT NULL,
+      gender VARCHAR(10) NOT NULL CHECK (gender IN ('male', 'female', 'Non-binary')),
+      language VARCHAR(50) NOT NULL,
+      dateOfBirth DATE NOT NULL,
+      referralCode VARCHAR(50), 
+      aboveLegalAge BOOLEAN NOT NULL DEFAULT false,
+      termsAndConditionsAccepted BOOLEAN NOT NULL DEFAULT false,
+      subscribedToNewsletter BOOLEAN NOT NULL DEFAULT false,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `;
