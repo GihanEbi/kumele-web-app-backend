@@ -30,3 +30,42 @@ export const userRegistrationSchema = Joi.object({
     .required()
     .label("Subscribed to Newsletter"),
 });
+
+// email otp schema
+export const emailOtpSchema = Joi.object({
+  email: Joi.string().email().required().label("Email"),
+  otp: Joi.string().length(4).required().label("OTP"),
+});
+
+// login schema
+export const loginSchema = Joi.object({
+  email: Joi.string().email().required().label("Email"),
+  password: Joi.string().required().label("Password"),
+});
+
+// permission schema
+export const permissionSchema = Joi.object({
+  allow_notifications: Joi.boolean().required().label("Allow Notifications"),
+  allow_photos: Joi.string()
+    .valid(...Object.values(UserConstants.allowPhotosPermission))
+    .required()
+    .label("Allow Photos Permission"),
+  allow_location: Joi.string()
+    .valid(...Object.values(UserConstants.allowLocationPermission))
+    .required()
+    .label("Allow Location Permission"),
+});
+
+// update user name schema
+export const updateUserNameSchema = Joi.object({
+  action: Joi.string()
+    .valid(...Object.values(UserConstants.setUserNameAction))
+    .required()
+    .label("Action to Set User Name"),
+  // if action is 'save', username is required, if action is 'skip', username is not required
+  username: Joi.string().when("action", {
+    is: UserConstants.setUserNameAction.SAVE,
+    then: Joi.string().min(3).max(50).required().label("Username"),
+    otherwise: Joi.string().optional().empty("").label("Username"),
+  }),
+});

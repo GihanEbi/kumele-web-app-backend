@@ -16,3 +16,9 @@ export interface IdGenerator {
   code: string;
   seq: number;
 }
+
+// email otp
+export interface EmailOtp {
+  email: string;
+  otp: string;
+}

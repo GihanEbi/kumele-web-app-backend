@@ -13,4 +13,18 @@ export class UserConstants {
     CHINESE: "Chinese",
     ARABIC: "Arabic",
   };
+  static allowPhotosPermission = {
+    NON: "non",
+    ALL: "all",
+    SELECTED: "selected",
+  };
+  static allowLocationPermission = {
+    NON: "non",
+    ONCE: "once",
+    WHILE_USING: "while_using",
+  };
+  static setUserNameAction = {
+    SAVE: "save",
+    SKIP: "skip",
+  };
 }

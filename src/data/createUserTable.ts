@@ -4,6 +4,7 @@ const createUserTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS users (
       ID VARCHAR(10) PRIMARY KEY,
+      username VARCHAR(50),
       fullName VARCHAR(100) NOT NULL,
       email VARCHAR(100) NOT NULL UNIQUE,
       password VARCHAR(100) NOT NULL,
