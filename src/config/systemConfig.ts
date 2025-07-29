@@ -12,7 +12,7 @@ export const systemConfig = {
     domain: process.env.EMAIL_DOMAIN || "",
     apiKey:
       process.env.EMAIL_API_KEY ||
-      "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",
+      "",
     email_sender_domain_email:
       process.env.EMAIL_SENDER_DOMAIN_EMAIL || "gihanpiumal12345@gmail.com",
   },
