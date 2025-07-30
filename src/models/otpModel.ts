@@ -40,8 +40,8 @@ export const createUpdateEmailOtp = async (otpData: EmailOtp) => {
     //   if the email already exists, update the OTP
     if (existingOtp.rows.length > 0) {
       const result = await pool.query(
-        "UPDATE email_otp SET otp = $1, created_at = CURRENT_TIMESTAMP WHERE email = $2 RETURNING *",
-        [otp, otpData.email]
+        "UPDATE email_otp SET otp = $1, created_at = $2, isverified = false WHERE email = $3 RETURNING *",
+        [otp, new Date(), otpData.email]
       );
 
       //   email send part
@@ -155,7 +155,7 @@ export const verifyEmailOtp = async (otpData: EmailOtp) => {
         console.log(`OTP lifetime in milliseconds: ${Number(systemConfig.otpLifeTime) * 60 * 1000}`);
 
         // if the time difference is less than the configured OTP lifetime, the OTP is valid
-        if (timeDiff < Number(systemConfig.otpLifeTime) * 60 * 1000 * 1000) {
+        if (timeDiff < Number(systemConfig.otpLifeTime) * 60 * 1000) {
           // update the isVerified field to true
           await pool.query(
             "UPDATE email_otp SET isVerified = true WHERE email = $1",
