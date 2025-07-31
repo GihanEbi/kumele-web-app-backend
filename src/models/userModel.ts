@@ -239,3 +239,29 @@ export const setUserNameService = async (
     throw new Error("Error setting user name");
   }
 };
+
+// This function updates the user's profile picture path in the DB
+export const updateUserProfilePicture = async (
+  ID: string,
+  profilePicture: string
+): Promise<User> => {
+  try {
+    const result = await pool.query(
+      `UPDATE users 
+       SET profilePicture = $1 
+       WHERE id = $2 
+       RETURNING *`, // RETURNING * gives you back the updated user row
+      [profilePicture, ID]
+    );
+
+    if (result.rows.length === 0) {
+      // This case is unlikely if the auth middleware works, but good for safety
+      throw new Error("User not found.");
+    }
+
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error in updateUserProfilePicture model:", error);
+    throw error; // Re-throw the error to be caught by the controller
+  }
+};

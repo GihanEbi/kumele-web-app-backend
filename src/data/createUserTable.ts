@@ -15,6 +15,8 @@ const createUserTable = async () => {
       aboveLegalAge BOOLEAN NOT NULL DEFAULT false,
       termsAndConditionsAccepted BOOLEAN NOT NULL DEFAULT false,
       subscribedToNewsletter BOOLEAN NOT NULL DEFAULT false,
+      profilePicture VARCHAR(255) DEFAULT '',
+      aboutMe TEXT DEFAULT '',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `;

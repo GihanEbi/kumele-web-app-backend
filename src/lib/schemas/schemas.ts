@@ -69,3 +69,9 @@ export const updateUserNameSchema = Joi.object({
     otherwise: Joi.string().optional().empty("").label("Username"),
   }),
 });
+
+// create hobby schema
+export const createHobbySchema = Joi.object({
+  name: Joi.string().min(3).max(50).required().label("Hobby Name"),
+  icon: Joi.string().required().label("Hobby Icon"),
+});

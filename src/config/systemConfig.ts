@@ -17,4 +17,5 @@ export const systemConfig = {
       process.env.EMAIL_SENDER_DOMAIN_EMAIL || "gihanpiumal12345@gmail.com",
   },
   clientUrl: process.env.CLIENT_URL || "http://localhost:3000",
+  baseUrl: process.env.BASE_URL || "http://localhost:5001",
 };

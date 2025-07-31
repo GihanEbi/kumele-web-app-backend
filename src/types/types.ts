@@ -10,6 +10,8 @@ export interface User {
   aboveLegalAge: boolean;
   termsAndConditionsAccepted: boolean;
   subscribedToNewsletter: boolean;
+  profilepicture: string;
+  aboutMe: string;
 }
 
 export interface IdGenerator {
@@ -21,4 +23,19 @@ export interface IdGenerator {
 export interface EmailOtp {
   email: string;
   otp: string;
+}
+
+// hobby
+export interface Hobby {
+  id: string;
+  name: string;
+  icon: string;
+  created_at: string;
+}
+
+// user settings
+export interface UserNotificationSettings {
+  userId: string;
+  notificationSoundEnabled: boolean;
+  emailNotificationsEnabled: boolean;
 }
