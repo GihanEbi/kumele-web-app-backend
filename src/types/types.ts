@@ -83,3 +83,15 @@ export interface DeleteAccount {
   userId: string;
   password: string;
 }
+
+// create hobby
+export interface CreateHobby {
+  name: string;
+  svg_code: string;
+}
+
+// user hobbies
+export interface UserHobby {
+  userId: string;
+  hobbyId: string[];
+}

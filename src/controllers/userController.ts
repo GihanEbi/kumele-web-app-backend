@@ -5,10 +5,12 @@ import {
   createOrUpdateUserPermissionsService,
   deleteUserAccountService,
   getUserDataService,
+  getUserHobbiesService,
   getUserNotificationStatusService,
   loginUserService,
   registerUserService,
   setTwoFactorAuthenticationService,
+  setUserHobbiesService,
   setUserNameService,
   updateUserAboutService,
   updateUserProfilePicture,
@@ -411,6 +413,57 @@ export const deleteUserAccount = async (
     res.status(statusCode).json({
       success: false,
       message: err.message || "Failed to delete user account.",
+    });
+    next(err);
+  }
+};
+
+// set user hobbies
+export const setUserHobbies = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+    const { hobbies } = req.body;
+
+    await setUserHobbiesService({ userId, hobbyId: hobbies });
+
+    res.status(200).json({
+      success: true,
+      message: "User hobbies updated successfully.",
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to update user hobbies.",
+    });
+    next(err);
+  }
+};
+
+// get user hobbies by user id
+export const getUserHobbies = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+
+    const hobbies = await getUserHobbiesService(userId);
+
+    res.status(200).json({
+      success: true,
+      data: hobbies,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to retrieve user hobbies.",
     });
     next(err);
   }

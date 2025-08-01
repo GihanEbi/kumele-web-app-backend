@@ -4,10 +4,12 @@ import {
   createOrUpdateUserNotifications,
   deleteUserAccount,
   getUserData,
+  getUserHobbies,
   getUserNotificationStatus,
   loginUser,
   registerUser,
   setTwoFactorAuthentication,
+  setUserHobbies,
   setUserName,
   updateProfileAbout,
   updateUserPermissions,
@@ -56,5 +58,7 @@ userRoutes.post(
   verifyTwoFactorAuthentication
 );
 userRoutes.delete("/delete-account", tokenAuthHandler, deleteUserAccount);
+userRoutes.post("/set-user-hobbies", tokenAuthHandler, setUserHobbies);
+userRoutes.get("/get-user-hobbies", tokenAuthHandler, getUserHobbies);
 
 export default userRoutes;

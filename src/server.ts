@@ -9,7 +9,6 @@ import createIdTable from "./data/createIdTable";
 import createEmailOtpTable from "./data/createEmailOtpTable";
 import otpRouter from "./routes/otpRoutes";
 import createPermissionTable from "./data/createPermissionTable";
-import applicationRouter from "./routes/applicationRoutes";
 import createHobbiesTable from "./data/createHobbiesTable";
 import createUserNotificationTable from "./data/createUserNotificationTable";
 import createUserCustomerSupportTable from "./data/createUserCustomerSupportTable";
@@ -18,6 +17,8 @@ import createGuidelinesTable from "./data/createGuidelinesTable";
 import guidelinesRouter from "./routes/guidlinesRoutes";
 import createTermsConditionTable from "./data/createTermsConditionTable";
 import termsCondRoutes from "./routes/termsConditionRoutes";
+import hobbyRouter from "./routes/hobbyRoutes";
+import createUserHobbiesTable from "./data/createUserHobbiesTable";
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -35,11 +36,10 @@ app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 // routes
 app.use("/api/users", userRoutes);
 app.use("/api/otp", otpRouter);
-app.use("/api/application", applicationRouter);
 app.use("/api/customer-support", customerSupportRouter);
 app.use("/api/guidelines", guidelinesRouter);
 app.use("/api/terms-conditions", termsCondRoutes);
-
+app.use("/api/hobbies", hobbyRouter);
 
 // Error handling middleware
 // app.use(errorHandler);
@@ -54,6 +54,7 @@ createUserNotificationTable();
 createUserCustomerSupportTable();
 createGuidelinesTable();
 createTermsConditionTable();
+createUserHobbiesTable();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

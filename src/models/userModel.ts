@@ -10,6 +10,7 @@ import {
   twoFactorAuthSetupSchema,
   twoFactorAuthVerifySchema,
   deleteAccountSchema,
+  userHobbiesSchema,
 } from "../lib/schemas/schemas";
 import { generateToken } from "../service/authService/authService";
 import { createId } from "../service/idGenerator/idGenerator";
@@ -19,6 +20,7 @@ import {
   DeleteAccount,
   SetTwoFactorAuthentication,
   User,
+  UserHobby,
   UserNotificationSettings,
   VerifyTwoFactorAuthentication,
 } from "../types/types";
@@ -597,6 +599,75 @@ export const deleteUserAccountService = async (
     await pool.query("DELETE FROM users WHERE ID = $1", [userId]);
   } catch (error) {
     console.error("Error in deleteUserAccountService model:", error);
+    throw error;
+  }
+};
+
+//  function for set user hobbies
+export const setUserHobbiesService = async (data: UserHobby): Promise<void> => {
+  // check all data with schema validation in Joi
+  let checkData = validation(userHobbiesSchema, data);
+  if (checkData !== null) {
+    let errorMessage = Object.values(checkData).join(", ");
+    const error = new Error(errorMessage);
+    (error as any).statusCode = 400;
+    throw error;
+  }
+
+  const { userId, hobbyId } = data;
+
+  try {
+    // Check if the user exists
+    const existingUser = await pool.query("SELECT * FROM users WHERE ID = $1", [
+      userId,
+    ]);
+    if (existingUser.rows.length === 0) {
+      const error = new Error(`User not found: ${userId}`);
+      (error as any).statusCode = 404;
+      throw error;
+    }
+    // Check if the hobbies exist
+    const existingHobbies = await pool.query(
+      "SELECT * FROM hobbies WHERE ID = ANY($1)",
+      [hobbyId]
+    );
+    if (existingHobbies.rows.length === 0) {
+      const error = new Error(`Hobbies not found: ${hobbyId.join(", ")}`);
+      (error as any).statusCode = 404;
+      throw error;
+    }
+
+    // Delete existing hobbies for the user
+    await pool.query("DELETE FROM user_hobbies WHERE user_id = $1", [userId]);
+
+    // Insert new hobbies for the user
+    const insertPromises = hobbyId.map((hobby) =>
+      pool.query(
+        "INSERT INTO user_hobbies (user_id, hobby_id) VALUES ($1, $2)",
+        [userId, hobby]
+      )
+    );
+    await Promise.all(insertPromises);
+  } catch (error) {
+    console.error("Error in setUserHobbiesService model:", error);
+    throw error;
+  }
+};
+
+// get user hobbies service
+export const getUserHobbiesService = async (
+  userId: string
+): Promise<string[]> => {
+  try {
+    const result = await pool.query(
+      "SELECT h.id FROM hobbies h JOIN user_hobbies uh ON h.ID = uh.hobby_id WHERE uh.user_id = $1",
+      [userId]
+    );
+    console.log(result);
+
+    return result.rows.map((row) => row.id);
+  } catch (error) {
+    console.error("Error in getUserHobbiesService model:", error);
     throw error;
   }
 };

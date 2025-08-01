@@ -71,12 +71,6 @@ export const updateUserNameSchema = Joi.object({
   }),
 });
 
-// create hobby schema
-export const createHobbySchema = Joi.object({
-  name: Joi.string().min(3).max(50).required().label("Hobby Name"),
-  icon: Joi.string().required().label("Hobby Icon"),
-});
-
 // change password schema
 export const changePasswordSchema = Joi.object({
   userId: Joi.string().required().label("User ID"),
@@ -127,3 +121,21 @@ export const deleteAccountSchema = Joi.object({
   userId: Joi.string().required().label("User ID"),
   password: Joi.string().min(6).max(100).required().label("Password"),
 });
+
+// create hobby schema
+export const createHobbySchema = Joi.object({
+  name: Joi.string().required().label("Hobby Name"),
+  svg_code: Joi.string().required().label("SVG Code"),
+});
+
+// user hobbies schema
+export const userHobbiesSchema = Joi.object({
+  userId: Joi.string().required().label("User ID"),
+  hobbyId: Joi.array()
+    .items(Joi.string())
+    .min(3)
+    .max(5)
+    .required()
+    .label("Hobby ID"),
+});
+
