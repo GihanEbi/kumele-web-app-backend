@@ -16,7 +16,10 @@ const createUserTable = async () => {
       termsAndConditionsAccepted BOOLEAN NOT NULL DEFAULT false,
       subscribedToNewsletter BOOLEAN NOT NULL DEFAULT false,
       profilePicture VARCHAR(255) DEFAULT '',
-      aboutMe TEXT DEFAULT '',
+      about_me TEXT DEFAULT '',
+      to_tp_secret TEXT DEFAULT '',
+      is_2fa_enabled BOOLEAN NOT NULL DEFAULT false,
+      my_referral_code VARCHAR(50) NOT NULL UNIQUE,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `;

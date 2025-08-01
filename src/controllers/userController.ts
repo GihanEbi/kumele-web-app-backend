@@ -1,10 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import {
+  changePasswordService,
+  createOrUpdateUserNotificationsService,
   createOrUpdateUserPermissionsService,
+  deleteUserAccountService,
+  getUserDataService,
+  getUserNotificationStatusService,
   loginUserService,
   registerUserService,
+  setTwoFactorAuthenticationService,
   setUserNameService,
+  updateUserAboutService,
   updateUserProfilePicture,
+  verifyTwoFactorAuthenticationService,
 } from "../models/userModel";
 import { pool } from "../config/db";
 import fs from "fs";
@@ -134,7 +142,7 @@ export const uploadUserProfile = async (
       "SELECT profilePicture FROM users WHERE id = $1",
       [userId]
     );
-    
+
     const oldImagePath = oldUserData.rows[0]?.profilepicture;
 
     if (oldImagePath && fs.existsSync(oldImagePath)) {
@@ -168,6 +176,241 @@ export const uploadUserProfile = async (
     res.status(statusCode).json({
       success: false,
       message: err.message || "Profile picture update failed.",
+    });
+    next(err);
+  }
+};
+
+// update profile about
+export const updateProfileAbout = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+    const { about } = req.body;
+
+    await updateUserAboutService(userId, about);
+
+    res.status(200).json({
+      success: true,
+      message: "Profile about section updated successfully.",
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Profile about update failed.",
+    });
+    next(err);
+  }
+};
+
+// create or update user notifications
+export const createOrUpdateUserNotifications = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+    const { soundNotifications, emailNotifications } = req.body;
+    await createOrUpdateUserNotificationsService(
+      userId,
+      soundNotifications,
+      emailNotifications
+    );
+    res.status(200).json({
+      success: true,
+      message: "User notifications updated successfully",
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "User notifications update failed",
+    });
+    next(err);
+  }
+};
+
+// get all data of the user
+export const getUserData = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+
+    // 1. Check if user ID is present (from auth middleware)
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication error: User ID not found.",
+      });
+    }
+
+    // 2. Fetch user data from the database
+    const userData = await getUserDataService(userId);
+
+    // 3. Send the user data in the response
+    res.status(200).json({
+      success: true,
+      data: userData,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to retrieve user data.",
+    });
+    next(err);
+  }
+};
+
+// get user notification status
+export const getUserNotificationStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+
+    // 1. Check if user ID is present (from auth middleware)
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication error: User ID not found.",
+      });
+    }
+
+    // 2. Fetch user notification status from the database
+    const notificationStatus = await getUserNotificationStatusService(userId);
+
+    // 3. Send the notification status in the response
+    res.status(200).json({
+      success: true,
+      data: notificationStatus,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to retrieve user notification status.",
+    });
+    next(err);
+  }
+};
+
+// change password
+export const changePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+    const { oldPassword, newPassword } = req.body;
+
+    await changePasswordService({ userId, oldPassword, newPassword });
+
+    res.status(200).json({
+      success: true,
+      message: "Password changed successfully.",
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Password change failed.",
+    });
+    next(err);
+  }
+};
+
+// set 2 factor authentication
+export const setTwoFactorAuthentication = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+    const { isEnabled } = req.body;
+
+    const result = await setTwoFactorAuthenticationService({
+      userId,
+      isEnabled,
+    });
+
+    res.status(200).json({
+      success: true,
+      qrCode: result,
+      message: "Two-factor authentication updated successfully.",
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to update two-factor authentication.",
+    });
+    next(err);
+  }
+};
+
+// verify two factor authentication
+export const verifyTwoFactorAuthentication = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+    const { otp } = req.body;
+
+    await verifyTwoFactorAuthenticationService({ userId, otp });
+
+    res.status(200).json({
+      success: true,
+      message: "Two-factor authentication verified successfully.",
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to verify two-factor authentication.",
+    });
+    next(err);
+  }
+};
+
+// delete user account from DB
+export const deleteUserAccount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+    const { password } = req.body;
+
+    await deleteUserAccountService({
+      userId,
+      password,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "User account deleted successfully.",
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to delete user account.",
     });
     next(err);
   }

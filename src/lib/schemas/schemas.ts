@@ -1,6 +1,7 @@
 // schema for user registration
 import Joi from "joi";
 import { UserConstants } from "../../constants/userConstants";
+import { CustomerSupportConstants } from "../../constants/customerSupportConstants";
 
 export const userRegistrationSchema = Joi.object({
   fullName: Joi.string().min(3).max(100).required().label("Name"),
@@ -74,4 +75,55 @@ export const updateUserNameSchema = Joi.object({
 export const createHobbySchema = Joi.object({
   name: Joi.string().min(3).max(50).required().label("Hobby Name"),
   icon: Joi.string().required().label("Hobby Icon"),
+});
+
+// change password schema
+export const changePasswordSchema = Joi.object({
+  userId: Joi.string().required().label("User ID"),
+  oldPassword: Joi.string().min(6).max(100).required().label("Old Password"),
+  newPassword: Joi.string().min(6).max(100).required().label("New Password"),
+});
+
+// set up 2FA schema
+export const twoFactorAuthSetupSchema = Joi.object({
+  userId: Joi.string().required().label("User ID"),
+  isEnabled: Joi.boolean().required().label("Enable 2FA"),
+});
+
+// verify 2FA schema
+export const twoFactorAuthVerifySchema = Joi.object({
+  userId: Joi.string().required().label("User ID"),
+  otp: Joi.string().length(6).required().label("OTP"),
+});
+
+// customer support schema
+export const customerSupportSchema = Joi.object({
+  userId: Joi.string().required().label("User ID"),
+  supportType: Joi.string()
+    .valid(...Object.values(CustomerSupportConstants.supportTypes))
+    .required()
+    .label("Support Type"),
+  supportMessage: Joi.string()
+    .min(10)
+    .max(500)
+    .required()
+    .label("Support Message"),
+});
+
+// guidelines schema
+export const guidelinesSchema = Joi.object({
+  guideline: Joi.string().required().label("Guideline"),
+  how_to: Joi.string().required().label("How To"),
+  popular: Joi.string().required().label("Popular"),
+});
+
+// terms and conditions schema
+export const termsAndConditionsSchema = Joi.object({
+  terms_cond: Joi.string().required().label("Terms and Conditions"),
+});
+
+// delete account schema
+export const deleteAccountSchema = Joi.object({
+  userId: Joi.string().required().label("User ID"),
+  password: Joi.string().min(6).max(100).required().label("Password"),
 });
