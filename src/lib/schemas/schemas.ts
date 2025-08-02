@@ -139,3 +139,22 @@ export const userHobbiesSchema = Joi.object({
     .label("Hobby ID"),
 });
 
+// landing page links schema
+export const landingPageLinksSchema = Joi.object({
+  android_app_link: Joi.string().required().label("Android App Link"),
+  ios_app_link: Joi.string().required().label("iOS App Link"),
+  youtube_link: Joi.string().required().label("YouTube Link"),
+  facebook_link: Joi.string().required().label("Facebook Link"),
+  instagram_link: Joi.string().required().label("Instagram Link"),
+  twitter_link: Joi.string().required().label("Twitter Link"),
+  pinterest_link: Joi.string().required().label("Pinterest Link"),
+});
+
+// landing page details schema
+export const landingPageDetailsSchema = Joi.object({
+  title: Joi.string().required().label("Title"),
+  subtitle: Joi.string().required().label("Subtitle"),
+  description: Joi.string().required().label("Description"),
+  bottom_text: Joi.string().required().label("Bottom Text"),
+  background_image_url: Joi.string().required().label("Background Image URL"),
+});

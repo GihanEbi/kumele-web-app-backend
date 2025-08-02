@@ -19,6 +19,10 @@ import createTermsConditionTable from "./data/createTermsConditionTable";
 import termsCondRoutes from "./routes/termsConditionRoutes";
 import hobbyRouter from "./routes/hobbyRoutes";
 import createUserHobbiesTable from "./data/createUserHobbiesTable";
+import createLandingPageLinksTable from "./data/createLandingPageLinksTable";
+import landingPageRouter from "./routes/landingPageRoutes";
+import createAboutUsTable from "./data/createAboutUsTable";
+import createLandingPageDetailsTable from "./data/createLandingPageDetailsTable";
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -40,6 +44,7 @@ app.use("/api/customer-support", customerSupportRouter);
 app.use("/api/guidelines", guidelinesRouter);
 app.use("/api/terms-conditions", termsCondRoutes);
 app.use("/api/hobbies", hobbyRouter);
+app.use("/api/landing-page",landingPageRouter)
 
 // Error handling middleware
 // app.use(errorHandler);
@@ -55,6 +60,9 @@ createUserCustomerSupportTable();
 createGuidelinesTable();
 createTermsConditionTable();
 createUserHobbiesTable();
+createLandingPageLinksTable();
+createAboutUsTable();
+createLandingPageDetailsTable();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

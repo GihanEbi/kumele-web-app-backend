@@ -95,3 +95,23 @@ export interface UserHobby {
   userId: string;
   hobbyId: string[];
 }
+
+// landing page links
+export interface LandingPageLinks {
+  android_app_link: string;
+  ios_app_link: string;
+  youtube_link: string;
+  facebook_link: string;
+  instagram_link: string;
+  twitter_link: string;
+  pinterest_link: string;
+}
+
+// landing page details
+export interface LandingPageDetails {
+  title: string;
+  subtitle: string;
+  description: string;
+  bottom_text: string;
+  background_image_url: string;
+}

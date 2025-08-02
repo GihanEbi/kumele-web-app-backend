@@ -3,5 +3,6 @@ export class id_codes {
     user: "US",
     hobby: "HB",
     customerSupport: "CS",
+    landingPageDetails: "LPD",
   };
 }
