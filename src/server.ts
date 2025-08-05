@@ -23,6 +23,8 @@ import createLandingPageDetailsTable from "./data/createLandingPageDetailsTable"
 import eventCategoryRouter from "./routes/eventCategoryRouters";
 import createEventCategoriesTable from "./data/createEventCategoriesTable";
 import createUserEventCategoryTable from "./data/createUserEventCategoryTable";
+import createEventTable from "./data/createEventTable";
+import eventRoutes from "./routes/eventRoutes";
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -45,6 +47,7 @@ app.use("/api/guidelines", guidelinesRouter);
 app.use("/api/terms-conditions", termsCondRoutes);
 app.use("/api/event-category", eventCategoryRouter);
 app.use("/api/landing-page",landingPageRouter)
+app.use("/api/events", eventRoutes);
 
 // Error handling middleware
 // app.use(errorHandler);
@@ -63,6 +66,7 @@ createUserEventCategoryTable();
 createLandingPageLinksTable();
 createAboutUsTable();
 createLandingPageDetailsTable();
+createEventTable();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

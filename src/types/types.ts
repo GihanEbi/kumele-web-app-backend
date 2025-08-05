@@ -115,3 +115,28 @@ export interface LandingPageDetails {
   bottom_text: string;
   background_image_url: string;
 }
+
+// event category
+export interface EventCategory {
+  id: string;
+  user_id: string;
+  category_id: string;
+  event_name: string;
+  event_image_url: string;
+  subtitle: string;
+  description: string;
+  event_start_in: string;
+  event_date: string;
+  event_start_time: string;
+  event_end_time: string;
+  street_address: string;
+  home_number: string;
+  district: string;
+  postal_zip_code: string;
+  state: string;
+  age_range_min: number;
+  age_range_max: number;
+  max_guests: number;
+  payment_type: string;
+  price: number;
+}

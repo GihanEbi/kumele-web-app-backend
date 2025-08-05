@@ -2,6 +2,7 @@
 import Joi from "joi";
 import { UserConstants } from "../../constants/userConstants";
 import { CustomerSupportConstants } from "../../constants/customerSupportConstants";
+import { EventConstants } from "../../constants/eventConstants";
 
 export const userRegistrationSchema = Joi.object({
   fullName: Joi.string().min(3).max(100).required().label("Name"),
@@ -157,4 +158,32 @@ export const landingPageDetailsSchema = Joi.object({
   description: Joi.string().required().label("Description"),
   bottom_text: Joi.string().required().label("Bottom Text"),
   background_image_url: Joi.string().required().label("Background Image URL"),
+});
+
+// event schema
+export const eventSchema = Joi.object({
+  user_id: Joi.string().required().label("User ID"),
+  category_id: Joi.string().required().label("Category ID"),
+  destination: Joi.string().required().label("Destination"),
+  event_image_url: Joi.string().required().label("Event Image URL"),
+  event_name: Joi.string().required().label("Event Name"),
+  subtitle: Joi.string().required().label("Subtitle"),
+  description: Joi.string().required().label("Description"),
+  event_start_in: Joi.string().required().label("Event Start In"),
+  event_date: Joi.string().required().label("Event Date"),
+  event_start_time: Joi.string().required().label("Event Start Time"),
+  event_end_time: Joi.string().required().label("Event End Time"),
+  street_address: Joi.string().required().label("Street Address"),
+  home_number: Joi.string().required().label("Home Number"),
+  district: Joi.string().required().label("District"),
+  postal_zip_code: Joi.string().required().label("Postal/Zip Code"),
+  state: Joi.string().required().label("State"),
+  age_range_min: Joi.string().required().label("Age Range Min"),
+  age_range_max: Joi.string().required().label("Age Range Max"),
+  max_guests: Joi.string().label("Max Guests"),
+  payment_type: Joi.string()
+    .valid(...Object.values(EventConstants.eventPaymentTypes))
+    .required()
+    .label("Payment Type"),
+  price: Joi.string().required().label("Price"),
 });

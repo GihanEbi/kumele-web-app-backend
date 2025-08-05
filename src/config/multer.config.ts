@@ -11,11 +11,14 @@ const ALLOWED_DESTINATIONS: { [key: string]: string } = {
   products: 'products',
   banners: 'banners',
   backgrounds: 'backgrounds',
+  events: 'events',
 };
 
 // Configure Multer Storage
 const dynamicStorage = multer.diskStorage({
+  
   destination: (req: Request, file, cb) => {
+    console.log("Dynamic storage configuration initialized.");
     // 1. Get the destination category from the request body.
     // The frontend must send a field named 'destination'.
     

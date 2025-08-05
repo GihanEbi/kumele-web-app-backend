@@ -16,6 +16,7 @@ export const tokenAuthHandler = async (
   res: Response,
   next: NextFunction
 ) => {
+  
   const token = req.headers["authorization"]?.split(" ")[0]; // Extract token from Authorization header
 
   if (!token) {
