@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { createHobbyService, getHobbiesList } from "../models/hobbyModel";
+import {
+  createEventCategoryService,
+  getEventCategoriesList,
+} from "../models/eventCategoryModel";
 
-export const createHobby = async (
+export const createEventCategory = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -13,7 +16,9 @@ export const createHobby = async (
 
     // 2. Validate the input
     if (!name) {
-      return res.status(400).json({ error: "Hobby name is required." });
+      return res
+        .status(400)
+        .json({ error: "Event category name is required." });
     }
     if (!file) {
       return res.status(400).json({ error: "SVG icon file is required." });
@@ -23,41 +28,44 @@ export const createHobby = async (
     const svg_code = file.buffer.toString("utf-8");
 
     // 4. Call the service function to interact with the database
-    const newHobby = await createHobbyService({ name, svg_code });
+    const newEventCategory = await createEventCategoryService({
+      name,
+      svg_code,
+    });
 
     // 5. Send a successful response
     return res.status(201).json({
-      message: "Hobby created successfully!",
-      hobby: newHobby,
+      message: "Event category created successfully!",
+      eventCategory: newEventCategory,
     });
   } catch (error: any) {
-    console.error("Error in createHobby controller:", error);
+    console.error("Error in createEventCategory controller:", error);
     return res
       .status(500)
       .json({ error: error.message || "An internal server error occurred." });
   }
 };
 
-// get all hobbies
-export const getHobbies = async (
+// get all event categories
+export const getEventCategories = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    // Fetch hobbies from the database (this function should be implemented in the model)
-    const hobbies = await getHobbiesList();
+    // Fetch event categories from the database (this function should be implemented in the model)
+    const eventCategories = await getEventCategoriesList();
 
     // Send a successful response
     return res.status(200).json({
       success: true,
-      message: "Hobbies fetched successfully",
-      data: hobbies,
+      message: "Event categories fetched successfully",
+      data: eventCategories,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to fetch hobbies",
+      message: "Failed to fetch event categories",
       error: error,
     });
     next(error);

@@ -1,8 +1,8 @@
 import { pool } from "../config/db";
 
-const createHobbiesTable = async () => {
+const createEventCategoriesTable = async () => {
   const query = `
-    CREATE TABLE IF NOT EXISTS hobbies (
+    CREATE TABLE IF NOT EXISTS event_categories (
       id VARCHAR(10) PRIMARY KEY,
       name VARCHAR(100) NOT NULL,
       svg_code TEXT NOT NULL,
@@ -11,10 +11,10 @@ const createHobbiesTable = async () => {
   `;
   try {
     await pool.query(query);
-    console.log("Hobbies table created successfully");
+    console.log("Event categories table created successfully");
   } catch (error) {
-    console.error("Error creating hobbies table:", error);
+    console.error("Error creating event categories table:", error);
   }
 };
 
-export default createHobbiesTable;
+export default createEventCategoriesTable;

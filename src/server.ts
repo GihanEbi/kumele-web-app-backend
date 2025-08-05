@@ -9,7 +9,6 @@ import createIdTable from "./data/createIdTable";
 import createEmailOtpTable from "./data/createEmailOtpTable";
 import otpRouter from "./routes/otpRoutes";
 import createPermissionTable from "./data/createPermissionTable";
-import createHobbiesTable from "./data/createHobbiesTable";
 import createUserNotificationTable from "./data/createUserNotificationTable";
 import createUserCustomerSupportTable from "./data/createUserCustomerSupportTable";
 import customerSupportRouter from "./routes/customerSupportRoutes";
@@ -17,12 +16,13 @@ import createGuidelinesTable from "./data/createGuidelinesTable";
 import guidelinesRouter from "./routes/guidlinesRoutes";
 import createTermsConditionTable from "./data/createTermsConditionTable";
 import termsCondRoutes from "./routes/termsConditionRoutes";
-import hobbyRouter from "./routes/hobbyRoutes";
-import createUserHobbiesTable from "./data/createUserHobbiesTable";
 import createLandingPageLinksTable from "./data/createLandingPageLinksTable";
 import landingPageRouter from "./routes/landingPageRoutes";
 import createAboutUsTable from "./data/createAboutUsTable";
 import createLandingPageDetailsTable from "./data/createLandingPageDetailsTable";
+import eventCategoryRouter from "./routes/eventCategoryRouters";
+import createEventCategoriesTable from "./data/createEventCategoriesTable";
+import createUserEventCategoryTable from "./data/createUserEventCategoryTable";
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -43,7 +43,7 @@ app.use("/api/otp", otpRouter);
 app.use("/api/customer-support", customerSupportRouter);
 app.use("/api/guidelines", guidelinesRouter);
 app.use("/api/terms-conditions", termsCondRoutes);
-app.use("/api/hobbies", hobbyRouter);
+app.use("/api/event-category", eventCategoryRouter);
 app.use("/api/landing-page",landingPageRouter)
 
 // Error handling middleware
@@ -54,12 +54,12 @@ createUserTable();
 createIdTable();
 createEmailOtpTable();
 createPermissionTable();
-createHobbiesTable();
+createEventCategoriesTable();
 createUserNotificationTable();
 createUserCustomerSupportTable();
 createGuidelinesTable();
 createTermsConditionTable();
-createUserHobbiesTable();
+createUserEventCategoryTable();
 createLandingPageLinksTable();
 createAboutUsTable();
 createLandingPageDetailsTable();

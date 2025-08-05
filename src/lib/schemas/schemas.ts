@@ -123,20 +123,20 @@ export const deleteAccountSchema = Joi.object({
 });
 
 // create hobby schema
-export const createHobbySchema = Joi.object({
+export const createEventCategorySchema = Joi.object({
   name: Joi.string().required().label("Hobby Name"),
   svg_code: Joi.string().required().label("SVG Code"),
 });
 
-// user hobbies schema
-export const userHobbiesSchema = Joi.object({
+// user event categories schema
+export const userEventCategoriesSchema = Joi.object({
   userId: Joi.string().required().label("User ID"),
-  hobbyId: Joi.array()
+  event_category_ids: Joi.array()
     .items(Joi.string())
     .min(3)
     .max(5)
     .required()
-    .label("Hobby ID"),
+    .label("Event Category IDs"),
 });
 
 // landing page links schema

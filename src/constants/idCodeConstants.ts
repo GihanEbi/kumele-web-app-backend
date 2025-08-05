@@ -1,7 +1,7 @@
 export class id_codes {
   static idCode = {
     user: "US",
-    hobby: "HB",
+    eventCategory: "EC",
     customerSupport: "CS",
     landingPageDetails: "LPD",
   };

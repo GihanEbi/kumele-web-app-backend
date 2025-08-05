@@ -5,12 +5,12 @@ import {
   createOrUpdateUserPermissionsService,
   deleteUserAccountService,
   getUserDataService,
-  getUserHobbiesService,
+  getUserEventCategoriesService,
   getUserNotificationStatusService,
   loginUserService,
   registerUserService,
   setTwoFactorAuthenticationService,
-  setUserHobbiesService,
+  setUserEventCategoriesService,
   setUserNameService,
   updateUserAboutService,
   updateUserProfilePicture,
@@ -418,34 +418,34 @@ export const deleteUserAccount = async (
   }
 };
 
-// set user hobbies
-export const setUserHobbies = async (
+// set user event categories
+export const setUserSelectedEventCategories = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const userId = req.UserID;
-    const { hobbies } = req.body;
+    const { event_category_ids } = req.body;
 
-    await setUserHobbiesService({ userId, hobbyId: hobbies });
+    await setUserEventCategoriesService({ userId, event_category_ids: event_category_ids });
 
     res.status(200).json({
       success: true,
-      message: "User hobbies updated successfully.",
+      message: "User event categories updated successfully.",
     });
   } catch (err: any) {
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Failed to update user hobbies.",
+      message: err.message || "Failed to update user event categories.",
     });
     next(err);
   }
 };
 
 // get user hobbies by user id
-export const getUserHobbies = async (
+export const getUserEventCategories = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -453,11 +453,11 @@ export const getUserHobbies = async (
   try {
     const userId = req.UserID;
 
-    const hobbies = await getUserHobbiesService(userId);
+    const eventCategories = await getUserEventCategoriesService(userId);
 
     res.status(200).json({
       success: true,
-      data: hobbies,
+      data: eventCategories,
     });
   } catch (err: any) {
     const statusCode = err.statusCode || 500;

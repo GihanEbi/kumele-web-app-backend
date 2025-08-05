@@ -10,7 +10,7 @@ import {
   twoFactorAuthSetupSchema,
   twoFactorAuthVerifySchema,
   deleteAccountSchema,
-  userHobbiesSchema,
+  userEventCategoriesSchema,
 } from "../lib/schemas/schemas";
 import { generateToken } from "../service/authService/authService";
 import { createId } from "../service/idGenerator/idGenerator";
@@ -20,7 +20,7 @@ import {
   DeleteAccount,
   SetTwoFactorAuthentication,
   User,
-  UserHobby,
+  UserEventCategory,
   UserNotificationSettings,
   VerifyTwoFactorAuthentication,
 } from "../types/types";
@@ -603,10 +603,12 @@ export const deleteUserAccountService = async (
   }
 };
 
-//  function for set user hobbies
-export const setUserHobbiesService = async (data: UserHobby): Promise<void> => {
+//  function for set user event categories
+export const setUserEventCategoriesService = async (
+  data: UserEventCategory
+): Promise<void> => {
   // check all data with schema validation in Joi
-  let checkData = validation(userHobbiesSchema, data);
+  let checkData = validation(userEventCategoriesSchema, data);
   if (checkData !== null) {
     let errorMessage = Object.values(checkData).join(", ");
     const error = new Error(errorMessage);
@@ -614,7 +616,7 @@ export const setUserHobbiesService = async (data: UserHobby): Promise<void> => {
     throw error;
   }
 
-  const { userId, hobbyId } = data;
+  const { userId, event_category_ids } = data;
 
   try {
     // Check if the user exists
@@ -626,48 +628,52 @@ export const setUserHobbiesService = async (data: UserHobby): Promise<void> => {
       (error as any).statusCode = 404;
       throw error;
     }
-    // Check if the hobbies exist
-    const existingHobbies = await pool.query(
-      "SELECT * FROM hobbies WHERE ID = ANY($1)",
-      [hobbyId]
+    // Check if the event categories exist
+    const existingEventCategories = await pool.query(
+      "SELECT * FROM event_categories WHERE ID = ANY($1)",
+      [event_category_ids]
     );
-    if (existingHobbies.rows.length === 0) {
-      const error = new Error(`Hobbies not found: ${hobbyId.join(", ")}`);
+    if (existingEventCategories.rows.length === 0) {
+      const error = new Error(
+        `Event Categories not found: ${event_category_ids.join(", ")}`
+      );
       (error as any).statusCode = 404;
       throw error;
     }
 
-    // Delete existing hobbies for the user
-    await pool.query("DELETE FROM user_hobbies WHERE user_id = $1", [userId]);
+    // Delete existing event categories for the user
+    await pool.query("DELETE FROM user_event_categories WHERE user_id = $1", [
+      userId,
+    ]);
 
-    // Insert new hobbies for the user
-    const insertPromises = hobbyId.map((hobby) =>
+    // Insert new event categories for the user
+    const insertPromises = event_category_ids.map((eventCategory) =>
       pool.query(
-        "INSERT INTO user_hobbies (user_id, hobby_id) VALUES ($1, $2)",
-        [userId, hobby]
+        "INSERT INTO user_event_categories (user_id, event_category_id) VALUES ($1, $2)",
+        [userId, eventCategory]
       )
     );
     await Promise.all(insertPromises);
   } catch (error) {
-    console.error("Error in setUserHobbiesService model:", error);
+    console.error("Error in setUserEventCategoriesService model:", error);
     throw error;
   }
 };
 
-// get user hobbies service
-export const getUserHobbiesService = async (
+// get user event categories service
+export const getUserEventCategoriesService = async (
   userId: string
 ): Promise<string[]> => {
   try {
     const result = await pool.query(
-      "SELECT h.id FROM hobbies h JOIN user_hobbies uh ON h.ID = uh.hobby_id WHERE uh.user_id = $1",
+      "SELECT ec.id FROM event_categories ec JOIN user_event_categories uec ON ec.ID = uec.event_category_id WHERE uec.user_id = $1",
       [userId]
     );
     console.log(result);
 
     return result.rows.map((row) => row.id);
   } catch (error) {
-    console.error("Error in getUserHobbiesService model:", error);
+    console.error("Error in getUserEventCategoriesService model:", error);
     throw error;
   }
 };

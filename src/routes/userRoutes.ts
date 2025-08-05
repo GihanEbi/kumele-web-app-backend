@@ -4,13 +4,13 @@ import {
   createOrUpdateUserNotifications,
   deleteUserAccount,
   getUserData,
-  getUserHobbies,
+  getUserEventCategories,
   getUserNotificationStatus,
   loginUser,
   registerUser,
   setTwoFactorAuthentication,
-  setUserHobbies,
   setUserName,
+  setUserSelectedEventCategories,
   updateProfileAbout,
   updateUserPermissions,
   uploadUserProfile,
@@ -58,7 +58,7 @@ userRoutes.post(
   verifyTwoFactorAuthentication
 );
 userRoutes.delete("/delete-account", tokenAuthHandler, deleteUserAccount);
-userRoutes.post("/set-user-hobbies", tokenAuthHandler, setUserHobbies);
-userRoutes.get("/get-user-hobbies", tokenAuthHandler, getUserHobbies);
+userRoutes.post("/set-user-event-categories", tokenAuthHandler, setUserSelectedEventCategories);
+userRoutes.get("/get-user-event-categories", tokenAuthHandler, getUserEventCategories);
 
 export default userRoutes;

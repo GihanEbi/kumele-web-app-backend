@@ -23,5 +23,5 @@ const upload = multer({
 });
 
 // We will export the configured middleware for a single file upload
-// The field name in the form data must be 'hobbyIcon'
-export const uploadHobbyIcon = upload.single('hobbyIcon');
+// The field name in the form data must be 'eventCategoryIcon'
+export const uploadEventCategoryIcon = upload.single('eventCategoryIcon');

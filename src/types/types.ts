@@ -85,15 +85,15 @@ export interface DeleteAccount {
 }
 
 // create hobby
-export interface CreateHobby {
+export interface CreateEventCategory {
   name: string;
   svg_code: string;
 }
 
-// user hobbies
-export interface UserHobby {
+// user event categories
+export interface UserEventCategory {
   userId: string;
-  hobbyId: string[];
+  event_category_ids: string[];
 }
 
 // landing page links
