@@ -164,9 +164,9 @@ export interface Message {
 
 // Interface for the data passed to the create message service
 export interface CreateMessageData {
-    eventId: string;
-    content: string;
-    userId: number;
+  eventId: string;
+  content: string;
+  userId: number;
 }
 
 // This interface describes the data the server can send to the client
@@ -181,7 +181,6 @@ export interface ClientToServerEvents {
   join_event: (data: { eventId: string }) => void;
   send_message: (data: { eventId: string; content: string }) => void;
 }
-
 
 // blog
 export interface Blog {
@@ -206,4 +205,27 @@ export interface BlogComment {
   user_id: string;
   reply_to: string | null;
   content: string;
+}
+
+// subscription data
+export interface SubscriptionData {
+  icon_code: string;
+  title: string;
+  description: string;
+  price: number;
+  validity_period: string;
+}
+
+// guest tickets
+export interface GuestTicket {
+  icon_code: string;
+  title: string;
+  description: string;
+  price: number;
+}
+
+// create user subscriptions
+export interface CreateUserSubscription {
+  user_id: string;
+  subscription_id: string;
 }

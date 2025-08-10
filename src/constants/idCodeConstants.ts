@@ -7,5 +7,7 @@ export class id_codes {
     event: "EV",
     blog: "BL",
     blogComment: "BLC",
+    subscription: "SUB",
+    guestTicket: "GT",
   };
 }

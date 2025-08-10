@@ -251,3 +251,26 @@ export const blogCommentSchema = Joi.object({
   reply_to: Joi.string().optional().empty("").label("Reply To"),
   content: Joi.string().required().label("Content"),
 });
+
+// subscription data
+export const subscriptionDataSchema = Joi.object({
+  icon_code: Joi.string().required().label("Icon Code"),
+  title: Joi.string().required().label("Title"),
+  description: Joi.string().required().label("Description"),
+  price: Joi.number().required().label("Price"),
+  validity_period: Joi.string().required().label("Validity Period"),
+});
+
+// guest ticket
+export const guestTicketSchema = Joi.object({
+  icon_code: Joi.string().required().label("Icon Code"),
+  title: Joi.string().required().label("Title"),
+  description: Joi.string().required().label("Description"),
+  price: Joi.number().required().label("Price"),
+});
+
+// create user subscription
+export const createUserSubscriptionSchema = Joi.object({
+  user_id: Joi.string().required().label("User ID"),
+  subscription_id: Joi.string().required().label("Subscription ID"),
+});

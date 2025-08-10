@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
-import http from 'http';
-import { Server } from 'socket.io';
+import http from "http";
+import { Server } from "socket.io";
 import path from "path";
 import userRoutes from "./routes/userRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -31,6 +31,11 @@ import createBlogTable from "./data/createBlogTable";
 import blogRoute from "./routes/blogRoutes";
 import createBlogLikeTable from "./data/createBlogLikeTable";
 import createBlogCommentTable from "./data/createBlogCommentTable";
+import createSubscriptionDataTable from "./data/createSubscriptionDataTable";
+import subscriptionDataRouter from "./routes/subscriptionDataRoutes";
+import createGuestTicketsTable from "./data/createGuestTicketsTable";
+import guestTicketRouter from "./routes/guestTicketRoute";
+import createUserSubscriptionTable from "./data/createUserSuscriptionTable";
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -38,7 +43,7 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 // middlewares
-// app.use(cors({ origin: 'http://localhost:3000' })); 
+// app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -49,21 +54,21 @@ const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: "*", // Configure properly for production
-  }
+  },
 });
 
 // --- WebSocket Connection Logic (for clients to join rooms) ---
 // This part is crucial for clients to be able to RECEIVE messages
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
   console.log(`A user connected: ${socket.id}`);
 
   // When a user enters an event page, they should emit this event
-  socket.on('join_event', (eventId: string) => {
+  socket.on("join_event", (eventId: string) => {
     console.log(`Socket ${socket.id} is joining room: ${eventId}`);
     socket.join(eventId);
   });
 
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
   });
 });
@@ -77,9 +82,11 @@ app.use("/api/customer-support", customerSupportRouter);
 app.use("/api/guidelines", guidelinesRouter);
 app.use("/api/terms-conditions", termsCondRoutes);
 app.use("/api/event-category", eventCategoryRouter);
-app.use("/api/landing-page",landingPageRouter)
+app.use("/api/landing-page", landingPageRouter);
 app.use("/api/events", eventRoutes);
 app.use("/api/blogs", blogRoute);
+app.use("/api/subscriptions", subscriptionDataRouter);
+app.use("/api/guest-tickets", guestTicketRouter);
 
 // Error handling middleware
 // app.use(errorHandler);
@@ -102,6 +109,9 @@ createEventTable();
 createBlogTable();
 createBlogLikeTable();
 createBlogCommentTable();
+createSubscriptionDataTable();
+createGuestTicketsTable();
+createUserSubscriptionTable();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
