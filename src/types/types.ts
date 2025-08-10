@@ -140,3 +140,70 @@ export interface EventCategory {
   payment_type: string;
   price: number;
 }
+
+// This describes the data that can be stored on the socket instance itself
+export interface SocketData {
+  user: {
+    id: number; // Or string, depending on your user ID type
+    username: string;
+  };
+}
+
+export interface Message {
+  id: string; // Or number
+  content: string;
+  sender_id: string; // Matches your req.UserID type
+  event_id: string; // Or number
+  created_at: string;
+  // We'll add sender info dynamically
+  sender?: {
+    username: string;
+    // any other user info you want to send
+  };
+}
+
+// Interface for the data passed to the create message service
+export interface CreateMessageData {
+    eventId: string;
+    content: string;
+    userId: number;
+}
+
+// This interface describes the data the server can send to the client
+export interface ServerToClientEvents {
+  message_history: (messages: Message[]) => void;
+  new_message: (message: Message) => void;
+  error: (data: { message: string }) => void;
+}
+
+// This interface describes the data the client can send to the server
+export interface ClientToServerEvents {
+  join_event: (data: { eventId: string }) => void;
+  send_message: (data: { eventId: string; content: string }) => void;
+}
+
+
+// blog
+export interface Blog {
+  id: string;
+  event_category_id: string;
+  blog_name: string;
+  banner_img_url: string;
+  blog_img_url: string;
+  blog_video_link: string;
+  youtube_link: string;
+  facebook_link: string;
+  instagram_link: string;
+  pinterest_link: string;
+  twitter_link: string;
+  blog_content: string;
+  author_id: string;
+}
+
+// blog comment
+export interface BlogComment {
+  blog_id: string;
+  user_id: string;
+  reply_to: string | null;
+  content: string;
+}

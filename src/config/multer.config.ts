@@ -12,6 +12,7 @@ const ALLOWED_DESTINATIONS: { [key: string]: string } = {
   banners: 'banners',
   backgrounds: 'backgrounds',
   events: 'events',
+  blog: 'blog'
 };
 
 // Configure Multer Storage

@@ -5,7 +5,9 @@ import {
   getEventByCategoryIDService,
   getEventByIdService,
   getEventByUserIDService,
+  updateEventByIdService,
 } from "../models/eventModel";
+import fs from "fs";
 
 export const createEvent = async (
   req: Request,
@@ -125,6 +127,62 @@ export const getEventById = async (
     res.status(500).json({
       success: false,
       message: "Failed to retrieve event",
+      error: err,
+    });
+    next(err);
+  }
+};
+
+// This function updates an event by Id
+export const updateEvent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const eventId = req.params.eventId;
+    const eventData = req.body;
+
+    // check if the eventId is provided
+    if (!eventId) {
+      return res.status(400).json({
+        success: false,
+        message: "Event ID is required",
+      });
+    }
+
+    // remove destination and event_image from req.body
+    delete eventData.destination;
+    delete eventData.event_image;
+
+    // 2. Check if a file was actually uploaded by Multer
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No image file provided.",
+      });
+    }
+    req.body.event_image_url = req.file.path;
+    // 3. (Optional but Recommended) Delete the old image path
+    const oldEvent = await getEventByIdService(eventId);
+    if (oldEvent && oldEvent.event_image_url) {
+      // Delete the old image file from the server
+      fs.unlink(oldEvent.event_image_url, (err) => {
+        if (err) {
+          console.error("Error deleting old image:", err);
+        }
+      });
+    }
+
+    const updatedEvent = await updateEventByIdService(eventId, eventData);
+    res.status(200).json({
+      success: true,
+      data: updatedEvent,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update event",
       error: err,
     });
     next(err);

@@ -187,3 +187,67 @@ export const eventSchema = Joi.object({
     .label("Payment Type"),
   price: Joi.string().required().label("Price"),
 });
+
+// update event schema
+export const updateEventSchema = Joi.object({
+  category_id: Joi.string().required().label("Category ID"),
+  event_image_url: Joi.string().required().label("Event Image URL"),
+  event_name: Joi.string().required().label("Event Name"),
+  subtitle: Joi.string().required().label("Subtitle"),
+  description: Joi.string().required().label("Description"),
+  event_start_in: Joi.string().required().label("Event Start In"),
+  event_date: Joi.string().required().label("Event Date"),
+  event_start_time: Joi.string().required().label("Event Start Time"),
+  event_end_time: Joi.string().required().label("Event End Time"),
+  street_address: Joi.string().required().label("Street Address"),
+  home_number: Joi.string().required().label("Home Number"),
+  district: Joi.string().required().label("District"),
+  postal_zip_code: Joi.string().required().label("Postal/Zip Code"),
+  state: Joi.string().required().label("State"),
+  age_range_min: Joi.string().required().label("Age Range Min"),
+  age_range_max: Joi.string().required().label("Age Range Max"),
+  max_guests: Joi.string().label("Max Guests"),
+  payment_type: Joi.string()
+    .valid(...Object.values(EventConstants.eventPaymentTypes))
+    .required()
+    .label("Payment Type"),
+  price: Joi.string().required().label("Price"),
+});
+
+// blog create
+export const blogCreateSchema = Joi.object({
+  event_category_id: Joi.string().required().label("Event Category ID"),
+  blog_name: Joi.string().required().label("Blog Name"),
+  banner_img_url: Joi.string().required().label("Banner Image URL"),
+  blog_img_url: Joi.string().required().label("Blog Image URL"),
+  blog_video_link: Joi.string().label("Blog Video Link"),
+  youtube_link: Joi.string().label("YouTube Link"),
+  facebook_link: Joi.string().label("Facebook Link"),
+  instagram_link: Joi.string().label("Instagram Link"),
+  pinterest_link: Joi.string().label("Pinterest Link"),
+  twitter_link: Joi.string().label("Twitter Link"),
+  blog_content: Joi.string().required().label("Blog Content"),
+  author_id: Joi.string().required().label("Author ID"),
+});
+// blog update
+export const updateBlogSchema = Joi.object({
+  event_category_id: Joi.string().label("Event Category ID"),
+  blog_name: Joi.string().label("Blog Name"),
+  banner_img_url: Joi.string().label("Banner Image URL"),
+  blog_img_url: Joi.string().label("Blog Image URL"),
+  blog_video_link: Joi.string().label("Blog Video Link"),
+  youtube_link: Joi.string().label("YouTube Link"),
+  facebook_link: Joi.string().label("Facebook Link"),
+  instagram_link: Joi.string().label("Instagram Link"),
+  pinterest_link: Joi.string().label("Pinterest Link"),
+  twitter_link: Joi.string().label("Twitter Link"),
+  blog_content: Joi.string().label("Blog Content"),
+});
+
+// blog comment
+export const blogCommentSchema = Joi.object({
+  blog_id: Joi.string().required().label("Blog ID"),
+  user_id: Joi.string().required().label("User ID"),
+  reply_to: Joi.string().optional().empty("").label("Reply To"),
+  content: Joi.string().required().label("Content"),
+});

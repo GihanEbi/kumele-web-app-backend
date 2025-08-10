@@ -9,6 +9,7 @@ import {
   getEventByCategoryID,
   getEventById,
   getEventByUserID,
+  updateEvent,
 } from "../controllers/eventController";
 
 const eventRoutes = Router();
@@ -32,5 +33,12 @@ eventRoutes.get(
   getEventByCategoryID
 );
 eventRoutes.get("/get-event-by-id/:eventId", tokenAuthHandler, getEventById);
+
+eventRoutes.put(
+  "/update-event-by-id/:eventId",
+  tokenAuthHandler,
+  dynamicUpload.single("event_image"),
+  updateEvent
+);
 
 export default eventRoutes;

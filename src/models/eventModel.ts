@@ -1,6 +1,6 @@
 import { pool } from "../config/db";
 import { id_codes } from "../constants/idCodeConstants";
-import { eventSchema } from "../lib/schemas/schemas";
+import { eventSchema, updateEventSchema } from "../lib/schemas/schemas";
 import { createId } from "../service/idGenerator/idGenerator";
 import { validation } from "../service/schemaValidetionService/schemaValidetionService";
 import { EventCategory } from "../types/types";
@@ -16,7 +16,6 @@ export const createEventService = async (
     (error as any).statusCode = 400;
     throw error;
   }
-  console.log("Event data validated successfully:", eventData);
 
   try {
     // generate the id for the event
@@ -149,5 +148,44 @@ export const getEventByIdService = async (
   } catch (error) {
     console.error("Error retrieving event by ID:", error);
     throw new Error("Error retrieving event by ID");
+  }
+};
+
+// This function updates an event by its ID
+export const updateEventByIdService = async (
+  eventId: string,
+  eventData: Partial<EventCategory>
+): Promise<EventCategory> => {
+  // check all input data with schema validation in Joi
+  let checkData = validation(updateEventSchema, eventData);
+  if (checkData !== null) {
+    let errorMessage = Object.values(checkData).join(", ");
+    const error = new Error(errorMessage);
+    (error as any).statusCode = 400;
+    throw error;
+  }
+
+  // check if the event exists
+  const eventCheck = await pool.query(`SELECT * FROM events WHERE id = $1`, [
+    eventId,
+  ]);
+  if (eventCheck.rows.length === 0) {
+    return Promise.reject(new Error("Event not found"));
+  }
+
+  try {
+    const fields = Object.keys(eventData)
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(", ");
+    const values = [eventId, ...Object.values(eventData)];
+
+    const result = await pool.query(
+      `UPDATE events SET ${fields} WHERE id = $1 RETURNING *`,
+      values
+    );
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error updating event by ID:", error);
+    throw new Error("Error updating event by ID");
   }
 };

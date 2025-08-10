@@ -1,5 +1,3 @@
-import e from "express";
-
 export class id_codes {
   static idCode = {
     user: "US",
@@ -7,5 +5,7 @@ export class id_codes {
     customerSupport: "CS",
     landingPageDetails: "LPD",
     event: "EV",
+    blog: "BL",
+    blogComment: "BLC",
   };
 }

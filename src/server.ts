@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import http from 'http';
+import { Server } from 'socket.io';
 import path from "path";
 import userRoutes from "./routes/userRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -25,6 +27,10 @@ import createEventCategoriesTable from "./data/createEventCategoriesTable";
 import createUserEventCategoryTable from "./data/createUserEventCategoryTable";
 import createEventTable from "./data/createEventTable";
 import eventRoutes from "./routes/eventRoutes";
+import createBlogTable from "./data/createBlogTable";
+import blogRoute from "./routes/blogRoutes";
+import createBlogLikeTable from "./data/createBlogLikeTable";
+import createBlogCommentTable from "./data/createBlogCommentTable";
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -32,10 +38,35 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 // middlewares
+// app.use(cors({ origin: 'http://localhost:3000' })); 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(errorHandler);
+
+// --- Setup HTTP and Socket.IO Servers ---
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*", // Configure properly for production
+  }
+});
+
+// --- WebSocket Connection Logic (for clients to join rooms) ---
+// This part is crucial for clients to be able to RECEIVE messages
+io.on('connection', (socket) => {
+  console.log(`A user connected: ${socket.id}`);
+
+  // When a user enters an event page, they should emit this event
+  socket.on('join_event', (eventId: string) => {
+    console.log(`Socket ${socket.id} is joining room: ${eventId}`);
+    socket.join(eventId);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+});
 
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
@@ -48,6 +79,7 @@ app.use("/api/terms-conditions", termsCondRoutes);
 app.use("/api/event-category", eventCategoryRouter);
 app.use("/api/landing-page",landingPageRouter)
 app.use("/api/events", eventRoutes);
+app.use("/api/blogs", blogRoute);
 
 // Error handling middleware
 // app.use(errorHandler);
@@ -67,6 +99,9 @@ createLandingPageLinksTable();
 createAboutUsTable();
 createLandingPageDetailsTable();
 createEventTable();
+createBlogTable();
+createBlogLikeTable();
+createBlogCommentTable();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
