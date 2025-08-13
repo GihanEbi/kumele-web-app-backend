@@ -274,3 +274,86 @@ export const createUserSubscriptionSchema = Joi.object({
   user_id: Joi.string().required().label("User ID"),
   subscription_id: Joi.string().required().label("Subscription ID"),
 });
+
+// create advert
+export const createAdvertSchema = Joi.object({
+  user_id: Joi.string().required().label("User ID"),
+  category_id: Joi.string().required().label("Category ID"),
+  advert_image_type: Joi.string()
+    .valid("static", "carousel")
+    .required()
+    .label("Advert Image Type"),
+  advert_image_url_1: Joi.string().required().label("Advert Image URL 1"),
+  advert_image_url_2: Joi.string().optional().empty("").label("Advert Image URL 2"),
+  advert_image_url_3: Joi.string().optional().empty("").label("Advert Image URL 3"),
+  call_to_action: Joi.string().required().label("Call to Action"),
+  call_to_action_link: Joi.string().required().label("Call to Action Link"),
+  second_call_to_action: Joi.string().required().label("Second Call to Action"),
+  second_call_to_action_link: Joi.string()
+    .required()
+    .label("Second Call to Action Link"),
+  saved_campaign: Joi.string().required().label("Saved Campaign"),
+  campaign_name: Joi.string().required().label("Campaign Name"),
+  title: Joi.string().required().label("Title"),
+  description: Joi.string().required().label("Description"),
+  audience_min_age: Joi.number().min(0).required().label("Audience Min Age"),
+  audience_max_age: Joi.number().min(0).required().label("Audience Max Age"),
+  gender: Joi.string()
+    .valid("male", "female", "Non-binary")
+    .required()
+    .label("Gender"),
+  region: Joi.string().required().label("Region"),
+  advert_location: Joi.string().required().label("Advert Location"),
+  language: Joi.string().required().label("Language"),
+  advert_placement: Joi.string()
+    .valid("general", "notification", "both")
+    .required()
+    .label("Advert Placement"),
+  platform: Joi.string()
+    .valid("web", "ios", "android", "all")
+    .required()
+    .label("Platform"),
+  daily_budget: Joi.number().min(0).required().label("Daily Budget"),
+  advert_duration: Joi.number().min(0).required().label("Advert Duration"),
+});
+
+// update advert
+export const updateAdvertSchema = Joi.object({
+  category_id: Joi.string().required().label("Category ID"),
+  advert_image_type: Joi.string()
+    .valid("static", "carousel")
+    .required()
+    .label("Advert Image Type"),
+  advert_image_url_1: Joi.string().required().label("Advert Image URL 1"),
+  advert_image_url_2: Joi.string().optional().empty("").label("Advert Image URL 2"),
+  advert_image_url_3: Joi.string().optional().empty("").label("Advert Image URL 3"),
+  call_to_action: Joi.string().required().label("Call to Action"),
+  call_to_action_link: Joi.string().required().label("Call to Action Link"),
+  second_call_to_action: Joi.string().required().label("Second Call to Action"),
+  second_call_to_action_link: Joi.string()
+    .required()
+    .label("Second Call to Action Link"),
+  saved_campaign: Joi.string().required().label("Saved Campaign"),
+  campaign_name: Joi.string().required().label("Campaign Name"),
+  title: Joi.string().required().label("Title"),
+  description: Joi.string().required().label("Description"),
+  audience_min_age: Joi.number().min(0).required().label("Audience Min Age"),
+  audience_max_age: Joi.number().min(0).required().label("Audience Max Age"),
+  gender: Joi.string()
+    .valid("male", "female", "Non-binary")
+    .required()
+    .label("Gender"),
+  region: Joi.string().required().label("Region"),
+  advert_location: Joi.string().required().label("Advert Location"),
+  language: Joi.string().required().label("Language"),
+  advert_placement: Joi.string()
+    .valid("general", "notification", "both")
+    .required()
+    .label("Advert Placement"),
+  platform: Joi.string()
+    .valid("web", "ios", "android", "all")
+    .required()
+    .label("Platform"),
+  daily_budget: Joi.number().min(0).required().label("Daily Budget"),
+  advert_duration: Joi.number().min(0).required().label("Advert Duration"),
+});

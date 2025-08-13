@@ -36,6 +36,8 @@ import subscriptionDataRouter from "./routes/subscriptionDataRoutes";
 import createGuestTicketsTable from "./data/createGuestTicketsTable";
 import guestTicketRouter from "./routes/guestTicketRoute";
 import createUserSubscriptionTable from "./data/createUserSuscriptionTable";
+import createAdvertTable from "./data/createAdvertTable";
+import advertRoute from "./routes/advertRoute";
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -87,6 +89,7 @@ app.use("/api/events", eventRoutes);
 app.use("/api/blogs", blogRoute);
 app.use("/api/subscriptions", subscriptionDataRouter);
 app.use("/api/guest-tickets", guestTicketRouter);
+app.use("/api/adverts", advertRoute);
 
 // Error handling middleware
 // app.use(errorHandler);
@@ -112,6 +115,7 @@ createBlogCommentTable();
 createSubscriptionDataTable();
 createGuestTicketsTable();
 createUserSubscriptionTable();
+createAdvertTable();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

@@ -9,5 +9,6 @@ export class id_codes {
     blogComment: "BLC",
     subscription: "SUB",
     guestTicket: "GT",
+    advert : "AD"
   };
 }
