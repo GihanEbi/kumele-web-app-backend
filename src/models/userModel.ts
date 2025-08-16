@@ -140,7 +140,7 @@ export const loginUserService = async ({
     throw error;
   }
 
-  const token = generateToken(existingUser.rows[0].id);
+  const token = generateToken(existingUser.rows[0].id, existingUser.rows[0].username);
 
   // remove user password field in result
   existingUser.rows[0].password = undefined;

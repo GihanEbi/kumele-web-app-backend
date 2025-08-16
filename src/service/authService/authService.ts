@@ -2,9 +2,9 @@ import jwt from "jsonwebtoken";
 import { systemConfig } from "../../config/systemConfig";
 import { itemAvailable } from "./ItemAvailable";
 
-export const generateToken = (userId: string): string => {
-  
-  return jwt.sign({ userId }, systemConfig.jwtSecret, { expiresIn: "1d" });
+export const generateToken = (userId: string, username: string): string => {
+
+  return jwt.sign({ userId, username }, systemConfig.jwtSecret, { expiresIn: "1d" });
 };
 
 // export const verifyToken = (token: string) => {

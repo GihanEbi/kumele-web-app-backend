@@ -7,6 +7,7 @@ declare global {
   namespace Express {
     interface Request {
       UserID?: any;
+      username?: string;
     }
   }
 }
@@ -35,6 +36,7 @@ export const tokenAuthHandler = async (
     }
 
     req.UserID = (decoded as jwt.JwtPayload).userId;
+    req.username = (decoded as jwt.JwtPayload).username;
     next();
   } catch (error) {
     return res.status(401).json({ message: "Unauthorized" });

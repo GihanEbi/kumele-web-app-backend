@@ -38,6 +38,11 @@ import guestTicketRouter from "./routes/guestTicketRoute";
 import createUserSubscriptionTable from "./data/createUserSuscriptionTable";
 import createAdvertTable from "./data/createAdvertTable";
 import advertRoute from "./routes/advertRoute";
+import chatRouter from "./routes/chatRoutes";
+
+import { createMessageService, IMessage } from "./models/chatModel";
+import createMessagesTable from "./data/createChatTable";
+
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -51,28 +56,50 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(errorHandler);
 
-// --- Setup HTTP and Socket.IO Servers ---
+// --- Socket.io Integration ---
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*", // Configure properly for production
+    origin: "http://localhost:3000", // Your Next.js app's URL
+    methods: ["GET", "POST"],
   },
 });
 
-// --- WebSocket Connection Logic (for clients to join rooms) ---
-// This part is crucial for clients to be able to RECEIVE messages
 io.on("connection", (socket) => {
-  console.log(`A user connected: ${socket.id}`);
+  console.log(`✨ User connected: ${socket.id}`);
 
-  // When a user enters an event page, they should emit this event
-  socket.on("join_event", (eventId: string) => {
-    console.log(`Socket ${socket.id} is joining room: ${eventId}`);
+  // Event to join a chat room based on eventId
+  socket.on("joinRoom", (eventId: string) => {
     socket.join(eventId);
+    console.log(`User ${socket.id} joined room ${eventId}`);
   });
 
-  socket.on("disconnect", () => {
-    console.log(`User disconnected: ${socket.id}`);
+  // Event to handle sending a message
+  socket.on("sendMessage", async (message: IMessage) => {
+    try {
+      // 1. Save the message to the database
+      const savedMessage = await createMessageService(message);
+
+      // 2. Broadcast the saved message to everyone in that specific event room
+      io.to(message.event_id).emit("receiveMessage", savedMessage);
+    } catch (error) {
+      console.error("Error handling message:", error);
+      // Optional: emit an error back to the sender
+      socket.emit("messageError", "Failed to send message.");
+    }
   });
+
+  // Handle user disconnection
+  socket.on("disconnect", () => {
+    console.log(`🔥 User disconnected: ${socket.id}`);
+  });
+});
+
+// !!! --- NEW MIDDLEWARE --- !!!
+// This middleware makes the `io` instance available on `req.io` in all our controllers
+app.use((req, res, next) => {
+  req.io = io;
+  next();
 });
 
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
@@ -90,6 +117,7 @@ app.use("/api/blogs", blogRoute);
 app.use("/api/subscriptions", subscriptionDataRouter);
 app.use("/api/guest-tickets", guestTicketRouter);
 app.use("/api/adverts", advertRoute);
+app.use("/api/chat", chatRouter);
 
 // Error handling middleware
 // app.use(errorHandler);
@@ -116,6 +144,7 @@ createSubscriptionDataTable();
 createGuestTicketsTable();
 createUserSubscriptionTable();
 createAdvertTable();
+createMessagesTable();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
