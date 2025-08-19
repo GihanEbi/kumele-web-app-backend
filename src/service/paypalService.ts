@@ -60,7 +60,7 @@ export const createOrder = async (amount: string, currency: string) => {
  */
 export const captureOrder = async (orderID: string) => {
   const request = new paypal.orders.OrdersCaptureRequest(orderID);
-  request.requestBody({}); // request body is empty for capture
+  // request.requestBody({}); // request body is empty for capture
 
   try {
     const capture = await paypalClient().execute(request);
