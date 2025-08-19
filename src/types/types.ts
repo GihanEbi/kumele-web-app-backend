@@ -15,6 +15,13 @@ export interface User {
   aboutMe: string;
 }
 
+// Data needed to find or create a user
+export interface GoogleUserData {
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
 export interface IdGenerator {
   code: string;
   seq: number;

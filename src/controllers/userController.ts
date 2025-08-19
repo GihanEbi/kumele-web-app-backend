@@ -15,10 +15,15 @@ import {
   updateUserAboutService,
   updateUserProfilePicture,
   verifyTwoFactorAuthenticationService,
+  findOrCreateGoogleUser,
+  googleSignInUserService,
 } from "../models/userModel";
 import { pool } from "../config/db";
 import fs from "fs";
 import { systemConfig } from "../config/systemConfig";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const registerUser = async (
   req: Request,
@@ -37,6 +42,37 @@ export const registerUser = async (
       success: false,
       message: "User registration failed",
       error: err,
+    });
+    next(err);
+  }
+};
+
+export const googleSignIn = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // The frontend sends a 'token' in the request body
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ message: "Google ID token is required." });
+  }
+
+  try {
+    // 2. Find or create the user in your database
+    const user = await googleSignInUserService({ token });
+
+    res.status(200).json({
+      success: true,
+      message: "User logged in successfully",
+      data: user,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Login failed",
     });
     next(err);
   }
@@ -428,7 +464,10 @@ export const setUserSelectedEventCategories = async (
     const userId = req.UserID;
     const { event_category_ids } = req.body;
 
-    await setUserEventCategoriesService({ userId, event_category_ids: event_category_ids });
+    await setUserEventCategoriesService({
+      userId,
+      event_category_ids: event_category_ids,
+    });
 
     res.status(200).json({
       success: true,

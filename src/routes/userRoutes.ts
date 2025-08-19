@@ -6,6 +6,7 @@ import {
   getUserData,
   getUserEventCategories,
   getUserNotificationStatus,
+  googleSignIn,
   loginUser,
   registerUser,
   setTwoFactorAuthentication,
@@ -24,6 +25,7 @@ import { dynamicUpload } from "../config/multer.config";
 const userRoutes = Router();
 
 userRoutes.post("/login", loginUser);
+userRoutes.post("/google-signin", googleSignIn); // New route for Google Sign-In
 userRoutes.post("/register", registerUser);
 // Add other user-related routes here
 userRoutes.post("/update-permissions", tokenAuthHandler, updateUserPermissions);

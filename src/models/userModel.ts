@@ -18,6 +18,7 @@ import { validation } from "../service/schemaValidetionService/schemaValidetionS
 import {
   ChangePassword,
   DeleteAccount,
+  GoogleUserData,
   SetTwoFactorAuthentication,
   User,
   UserEventCategory,
@@ -27,6 +28,9 @@ import {
 import { comparePassword, hashPassword } from "../utils/hashUtils";
 import speakeasy from "speakeasy";
 import qrCode from "qrcode";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const registerUserService = async (userData: User): Promise<User> => {
   // check all user data with schema validation in Joi
@@ -102,6 +106,101 @@ export const registerUserService = async (userData: User): Promise<User> => {
   }
 };
 
+export const findOrCreateGoogleUser = async (
+  userData: GoogleUserData
+): Promise<User> => {
+  const { email, firstName, lastName } = userData;
+
+  try {
+    // 1. Check if user already exists
+    const findUserQuery = {
+      text: "SELECT * FROM users WHERE email = $1",
+      values: [email],
+    };
+
+    const { rows } = await pool.query(findUserQuery);
+
+    if (rows.length > 0) {
+      // User exists, return them
+      console.log(`User found with email: ${email}`);
+      return rows[0];
+    }
+
+    // 2. If user doesn't exist, create them
+    console.log(`No user found with email: ${email}. Creating new user.`);
+    const createUserQuery = {
+      text: `
+        INSERT INTO users (fullName, lastName, email, auth_provider)
+        VALUES ($1, $2, $3, 'google')
+        RETURNING *
+      `,
+      values: [firstName, lastName, email],
+    };
+
+    const result = await pool.query(createUserQuery);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error in findOrCreateGoogleUser:", error);
+    throw new Error("Database operation failed.");
+  }
+};
+
+export const googleSignInUserService = async ({
+  token,
+}: {
+  token: string;
+}): Promise<User> => {
+  try {
+    // 1. Verify the Google ID token
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    if (!payload || !payload.email) {
+      const error = new Error("Invalid Google token.");
+      (error as any).statusCode = 404;
+      throw error;
+    }
+
+    const { email } = payload;
+
+    // 1. Check if user already exists
+    const findUserQuery = {
+      text: "SELECT * FROM users WHERE email = $1",
+      values: [email],
+    };
+
+    const existingUser = await pool.query(findUserQuery);
+
+    if (existingUser.rows.length > 0) {
+      // User exists, return them
+      console.log(`User found with email: ${email}`);
+
+      const token = generateToken(
+        existingUser.rows[0].id,
+        existingUser.rows[0].username
+      );
+
+      // remove user password field in result
+      existingUser.rows[0].password = undefined;
+      return {
+        ...existingUser.rows[0],
+        token,
+      } as User;
+    } else {
+      const error = new Error("User not found");
+      (error as any).statusCode = 404;
+      throw error;
+    }
+  } catch (error) {
+    console.error("Error verifying Google token:", error);
+    throw new Error("Google token verification failed.");
+  }
+};
+
 export const loginUserService = async ({
   email,
   password,
@@ -140,7 +239,10 @@ export const loginUserService = async ({
     throw error;
   }
 
-  const token = generateToken(existingUser.rows[0].id, existingUser.rows[0].username);
+  const token = generateToken(
+    existingUser.rows[0].id,
+    existingUser.rows[0].username
+  );
 
   // remove user password field in result
   existingUser.rows[0].password = undefined;
@@ -261,8 +363,10 @@ export const setUserNameService = async (
         userId,
       ]);
     } else if (action === UserConstants.setUserNameAction.SKIP) {
-      // set user name empty if action is skip
-      await pool.query("UPDATE users SET username = '' WHERE ID = $1", [
+      // make a random readable username based on current time and user id
+      const randomUsername = `user_${Date.now()}_${userId}`;
+      await pool.query("UPDATE users SET username = $1 WHERE ID = $2", [
+        randomUsername,
         userId,
       ]);
     } else {
