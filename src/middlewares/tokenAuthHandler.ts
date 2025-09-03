@@ -39,6 +39,8 @@ export const tokenAuthHandler = async (
     req.username = (decoded as jwt.JwtPayload).username;
     next();
   } catch (error) {
+    console.log(error);
+    
     return res.status(401).json({ message: "Unauthorized" });
   }
 };

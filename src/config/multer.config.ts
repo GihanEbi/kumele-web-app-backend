@@ -23,7 +23,7 @@ const dynamicStorage = multer.diskStorage({
     console.log("Dynamic storage configuration initialized.");
     // 1. Get the destination category from the request body.
     // The frontend must send a field named 'destination'.
-    
+
     const destinationFolder = req.body.destination || 'default'; // Use 'default' if nothing is provided.
     
     // 2. Check if the destination is allowed.

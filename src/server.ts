@@ -44,6 +44,7 @@ import { createMessageService, IMessage } from "./models/chatModel";
 import createMessagesTable from "./data/createChatTable";
 import createCardsTable from "./data/createCardsTable";
 import paymentRouter from "./routes/paymentRouter";
+import createSavedCardsTable from "./data/createSavedCardsTable";
 
 dotenv.config();
 
@@ -120,7 +121,7 @@ app.use("/api/subscriptions", subscriptionDataRouter);
 app.use("/api/guest-tickets", guestTicketRouter);
 app.use("/api/adverts", advertRoute);
 app.use("/api/chat", chatRouter);
-app.use('/api/payments', paymentRouter);
+app.use("/api/payments", paymentRouter);
 
 // Error handling middleware
 // app.use(errorHandler);
@@ -149,6 +150,7 @@ createUserSubscriptionTable();
 createAdvertTable();
 createMessagesTable();
 createCardsTable();
+createSavedCardsTable();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

@@ -1,43 +1,46 @@
 import { pool } from "../config/db";
 
-export interface IUserCard {
-  user_id: string;
-  paypal_token: string;
-  card_type: string;
+interface CardDetails {
+  paypal_token_id: string;
+  card_brand: string;
   last4: string;
 }
 
-/**
- * Saves a new PayPal payment token (a vaulted card) to the database for a user.
- */
-export const saveCardTokenService = async (cardData: IUserCard) => {
-  const { user_id, paypal_token, card_type, last4 } = cardData;
+export const saveCardToDbService = async (
+  userId: string,
+  cardDetails: CardDetails
+) => {
+  const { paypal_token_id, card_brand, last4 } = cardDetails;
   try {
     const result = await pool.query(
-      `INSERT INTO user_cards (user_id, paypal_token, card_type, last4)
+      `INSERT INTO saved_paypal_cards (user_id, paypal_token_id, card_brand, last4)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, user_id, card_type, last4, is_default, created_at`, // Note: We don't return the token
-      [user_id, paypal_token, card_type, last4]
+       RETURNING *`,
+      [userId, paypal_token_id, card_brand, last4]
     );
     return result.rows[0];
   } catch (error) {
-    console.error("Error saving card token:", error);
-    throw new Error("Failed to save card.");
+    console.error("Error saving card to DB:", error);
+    // Handle potential unique constraint violation if token already exists
+    if (typeof error === "object" && error !== null && "code" in error && (error as any).code === '23505') {
+        throw new Error("This payment method is already saved.");
+    }
+    throw new Error("Error saving card to the database");
   }
 };
 
-/**
- * Fetches all saved cards for a specific user.
- */
-export const getUserCardsService = async (userId: string) => {
+export const listUserCardsFromDbService = async (userId: string) => {
   try {
     const result = await pool.query(
-      `SELECT id, card_type, last4, is_default FROM user_cards WHERE user_id = $1`,
+      `SELECT id, paypal_token_id, card_brand, last4, created_at
+       FROM saved_paypal_cards
+       WHERE user_id = $1
+       ORDER BY created_at DESC`,
       [userId]
     );
     return result.rows;
   } catch (error) {
-    console.error("Error fetching user cards:", error);
-    throw new Error("Failed to fetch user cards.");
+    console.error("Error fetching user cards from DB:", error);
+    throw new Error("Error fetching user cards");
   }
 };

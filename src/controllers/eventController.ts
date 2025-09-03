@@ -22,14 +22,22 @@ export const createEvent = async (
         message: "No image file provided.",
       });
     }
+    const user_id = req.UserID;
     req.body.event_image_url = req.file.path;
+    req.body.user_id = user_id;
+
+    console.log(req.body);
 
     // Call the createEventService to create the event
     const newEvent = await createEventService(req.body);
 
     res
       .status(201)
-      .json({ message: "Event created successfully.", event: newEvent });
+      .json({
+        success: true,
+        message: "Event created successfully.",
+        event: newEvent,
+      });
   } catch (err) {
     res.status(500).json({
       success: false,

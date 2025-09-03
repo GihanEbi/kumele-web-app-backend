@@ -29,6 +29,7 @@ import { comparePassword, hashPassword } from "../utils/hashUtils";
 import speakeasy from "speakeasy";
 import qrCode from "qrcode";
 import { OAuth2Client } from "google-auth-library";
+import { systemConfig } from "../config/systemConfig";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -74,7 +75,14 @@ export const registerUserService = async (userData: User): Promise<User> => {
   try {
     // generate the id for the user
     const userId = await createId(id_codes.idCode.user);
-    userData.ID = userId;
+    userData.ID = userId;const qrCodePayload = JSON.stringify({ 
+      id: userData.ID, 
+      name: userData.fullName 
+    });
+    
+    // Generate the QR code as a Data URL string.
+    const qrCodeDataUrl = await qrCode.toDataURL(qrCodePayload);
+    userData.qr_code_url = qrCodeDataUrl;
 
     // generate the referral code for the user
     userData.my_referral_code = generateRandomCode(7);
@@ -83,7 +91,7 @@ export const registerUserService = async (userData: User): Promise<User> => {
     userData.password = await hashPassword(userData.password);
 
     const result = await pool.query(
-      "INSERT INTO users (ID, fullName, email, password, gender, language, dateOfBirth,referralCode,aboveLegalAge,termsAndConditionsAccepted, subscribedToNewsletter,my_referral_code) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *",
+      "INSERT INTO users (ID, fullName, email, password, gender, language, dateOfBirth,referralCode,aboveLegalAge,termsAndConditionsAccepted, subscribedToNewsletter,my_referral_code,qr_code_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *",
       [
         userData.ID,
         userData.fullName,
@@ -97,6 +105,7 @@ export const registerUserService = async (userData: User): Promise<User> => {
         userData.termsAndConditionsAccepted,
         userData.subscribedToNewsletter,
         userData.my_referral_code,
+        userData.qr_code_url
       ]
     );
     return result.rows[0];
@@ -475,6 +484,10 @@ export const getUserDataService = async (userId: string): Promise<User> => {
       (error as any).statusCode = 404;
       throw error;
     }
+
+    // replace profilepicture path by imagePath.replace(/\\/g, "/")
+    result.rows[0].profilepicture = result.rows[0].profilepicture.replace(/\\/g, "/");
+    result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`
 
     // remove user password field in result
     result.rows[0].password = undefined;

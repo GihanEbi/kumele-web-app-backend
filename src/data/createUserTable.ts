@@ -6,7 +6,7 @@ const createUserTable = async () => {
       ID VARCHAR(10) PRIMARY KEY,
       username VARCHAR(50),
       fullName VARCHAR(100) NOT NULL,
-      email VARCHAR(100) NOT NULL UNIQUE,
+      email citext NOT NULL UNIQUE,
       password VARCHAR(100) NOT NULL,
       gender VARCHAR(10) NOT NULL CHECK (gender IN ('male', 'female', 'Non-binary')),
       language VARCHAR(50) NOT NULL,
@@ -20,6 +20,7 @@ const createUserTable = async () => {
       to_tp_secret TEXT DEFAULT '',
       is_2fa_enabled BOOLEAN NOT NULL DEFAULT false,
       my_referral_code VARCHAR(50) NOT NULL UNIQUE,
+      qr_code_url TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `;

@@ -12,6 +12,7 @@ export interface User {
   subscribedToNewsletter: boolean;
   profilepicture: string;
   my_referral_code: string;
+  qr_code_url: string;
   aboutMe: string;
 }
 

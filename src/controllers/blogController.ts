@@ -31,6 +31,7 @@ export const createBannerImg = async (
     const normalizedPath = req.file.path.replace(/\\/g, "/");
 
     res.status(201).json({
+      success: true,
       message: "Banner image created successfully.",
       banner_img_url: normalizedPath,
     });
@@ -38,7 +39,7 @@ export const createBannerImg = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Banner image creation failed",
     });
     next(err);
   }
@@ -98,6 +99,8 @@ export const createBlog = async (
         message: "No image file provided.",
       });
     }
+    // user id
+    const userId = req.UserID;
 
     // remove destination and blog_img_url from req.body
     delete req.body.destination;
@@ -105,12 +108,17 @@ export const createBlog = async (
     const normalizedPath = req.file.path.replace(/\\/g, "/");
 
     req.body.blog_img_url = normalizedPath;
+    req.body.author_id = userId;
     const blogData = req.body;
     const newBlog = await createBlogService(blogData);
 
     res
       .status(201)
-      .json({ message: "Blog created successfully.", blog: newBlog });
+      .json({
+        success: true,
+        message: "Blog created successfully.",
+        blog: newBlog,
+      });
   } catch (err: any) {
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({

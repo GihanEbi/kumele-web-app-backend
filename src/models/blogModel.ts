@@ -344,7 +344,57 @@ export const getBlogCommentsService = async (
       `SELECT * FROM blog_comments WHERE blog_id = $1`,
       [blogId]
     );
-    return result.rows;
+    // get username using user_id
+    const userIds = result.rows.map((comment) => comment.user_id);
+    const users = await pool.query(
+      `SELECT id, username FROM users WHERE id = ANY($1::text[])`,
+      [userIds]
+    );
+    const userMap = new Map(users.rows.map((user) => [user.id, user.username]));
+
+    // map comments to include username
+    const commentsWithUsernames = result.rows.map((comment) => ({
+      ...comment,
+      username: userMap.get(comment.user_id) || "Unknown",
+    }));
+
+    // check on every comment and find the reply_to for each and every comment and make a array using it
+    const replyComments = commentsWithUsernames.filter(
+      (comment) => comment.reply_to
+    );
+
+    // make an array with child comments
+    const childComments = replyComments.map((comment) => {
+      const parentComment = commentsWithUsernames.find(
+        (c) => c.id === comment.reply_to
+      );
+      return {
+        ...comment,
+        parent_comment_username:
+          userMap.get(parentComment.user_id) || "Unknown",
+      };
+    });
+
+    // map all child comments to their parent comment
+    const commentsWithParents = commentsWithUsernames.map((comment) => {
+      const child = childComments.find((c) => c.reply_to === comment.id);
+      return {
+        ...comment,
+        child_comments: child ? [child] : [],
+      };
+    });
+    // check if child comment also have child comment add that as well
+    commentsWithParents.forEach((comment) => {
+      comment.child_comments.forEach((child: any) => {
+        const grandChild = childComments.find((c) => c.reply_to === child.id);
+        if (grandChild) {
+          child.child_comments = child.child_comments || [];
+          child.child_comments.push(grandChild);
+        }
+      });
+    });
+
+    return commentsWithParents;
   } catch (error) {
     console.error("Error retrieving blog comments:", error);
     throw new Error("Error retrieving blog comments");

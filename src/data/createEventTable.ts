@@ -12,9 +12,9 @@ const createEventTable = async () => {
         subtitle VARCHAR(255) NOT NULL,
         description TEXT NOT NULL,
         event_start_in VARCHAR(50) NOT NULL,
-        event_date VARCHAR(50) NOT NULL,
-        event_start_time VARCHAR(50) NOT NULL,
-        event_end_time VARCHAR(50) NOT NULL,
+        event_date TEXT NOT NULL,
+        event_start_time TEXT NOT NULL,
+        event_end_time TEXT NOT NULL,
         street_address VARCHAR(255) NOT NULL,
         home_number VARCHAR(50) NOT NULL,
         district VARCHAR(100) NOT NULL,
@@ -23,7 +23,7 @@ const createEventTable = async () => {
         age_range_min VARCHAR(10) NOT NULL,
         age_range_max VARCHAR(10) NOT NULL,
         max_guests VARCHAR(10) NOT NULL,
-        payment_type VARCHAR(50) NOT NULL CHECK (payment_type IN ('free', 'card_payment', 'cash_on_entry')),
+        payment_type TEXT NOT NULL,
         price VARCHAR(10) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
