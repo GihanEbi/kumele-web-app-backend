@@ -1,4 +1,5 @@
 import { pool } from "../config/db";
+import jwt from "jsonwebtoken";
 import { id_codes } from "../constants/idCodeConstants";
 import { UserConstants } from "../constants/userConstants";
 import {
@@ -12,7 +13,10 @@ import {
   deleteAccountSchema,
   userEventCategoriesSchema,
 } from "../lib/schemas/schemas";
-import { generateToken } from "../service/authService/authService";
+import {
+  generateForgotPasswordToken,
+  generateToken,
+} from "../service/authService/authService";
 import { createId } from "../service/idGenerator/idGenerator";
 import { validation } from "../service/schemaValidetionService/schemaValidetionService";
 import {
@@ -30,6 +34,11 @@ import speakeasy from "speakeasy";
 import qrCode from "qrcode";
 import { OAuth2Client } from "google-auth-library";
 import { systemConfig } from "../config/systemConfig";
+import sgMail from "@sendgrid/mail";
+
+sgMail.setApiKey(systemConfig.emailConfig.apiKey);
+
+const clientURL = process.env.CLIENT_URL || `http://localhost:3000`;
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -75,11 +84,12 @@ export const registerUserService = async (userData: User): Promise<User> => {
   try {
     // generate the id for the user
     const userId = await createId(id_codes.idCode.user);
-    userData.ID = userId;const qrCodePayload = JSON.stringify({ 
-      id: userData.ID, 
-      name: userData.fullName 
+    userData.ID = userId;
+    const qrCodePayload = JSON.stringify({
+      id: userData.ID,
+      name: userData.fullName,
     });
-    
+
     // Generate the QR code as a Data URL string.
     const qrCodeDataUrl = await qrCode.toDataURL(qrCodePayload);
     userData.qr_code_url = qrCodeDataUrl;
@@ -105,7 +115,7 @@ export const registerUserService = async (userData: User): Promise<User> => {
         userData.termsAndConditionsAccepted,
         userData.subscribedToNewsletter,
         userData.my_referral_code,
-        userData.qr_code_url
+        userData.qr_code_url,
       ]
     );
     return result.rows[0];
@@ -261,6 +271,112 @@ export const loginUserService = async ({
   } as User;
 };
 
+export const sendPasswordResetEmailService = async ({
+  email,
+}: {
+  email: string;
+}): Promise<User> => {
+  // check if email and password with schema
+  let checkData = validation(loginSchema, { email, password: "@" }); // set dummy password to avoid schema error
+  if (checkData !== null) {
+    let errorMessage = Object.values(checkData).join(", ");
+    const error = new Error(errorMessage);
+    (error as any).statusCode = 400;
+    throw error;
+  }
+
+  // check if the email exists
+  const existingUser = await pool.query(
+    "SELECT * FROM users WHERE email = $1",
+    [email]
+  );
+  if (existingUser.rows.length === 0) {
+    const error = new Error(`User not found: ${email}`);
+    (error as any).statusCode = 404;
+    throw error;
+  }
+
+  const token = generateForgotPasswordToken(
+    existingUser.rows[0].id,
+    existingUser.rows[0].username
+  );
+
+  // save the token and its expiry time in the database
+  await pool.query(
+    "UPDATE users SET reset_password_token = $1, reset_password_expires = NOW() + interval '1 minutes' WHERE email = $2",
+    [token, email]
+  );
+
+  //   email send part
+  try {
+    const msg = {
+      to: existingUser.rows[0].email,
+      from: systemConfig.emailConfig.email_sender_domain_email,
+      subject: "Change password from Kumele",
+      text: `Hello,
+
+        Your password change link is: ${clientURL}/authentication/reset-password?reset_password_token=${token}
+          Please use this link to change your password.
+
+        Best regards,
+        Kumele Team`,
+
+      html: `
+          <div style="font-family: Arial, sans-serif; color: #333; background-color: #f9f9f9; padding: 20px; border-radius: 8px;">
+            <div style="max-width: 600px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); margin: auto;">
+              <h2 style="text-align: center; color: #007bff;">Change Password</h2>
+              <p>Hello,</p>
+              <p>Your password change link is: <strong>${clientURL}/authentication/reset-password?reset_password_token=${token}</strong></p>
+              <p>Please use this link to change your password.</p>
+            </div>
+              <hr style="border: none; border-top: 1px solid #ddd;">
+              <p style="text-align: center; font-size: 14px; color: #777;">Best regards,<br><strong>Kumele Team</strong></p>
+            </div>
+          </div>
+          `,
+    };
+    await sgMail.send(msg);
+    return existingUser.rows[0];
+  } catch (error) {
+    console.error(`Error sending email: ${error}`);
+    return Promise.reject(`Data added but failed to send OTP email: ${error}`);
+  }
+};
+
+export const resetPasswordService = async ({
+  newPassword,
+  reset_password_token,
+}: {
+  newPassword: string;
+  reset_password_token: string;
+}) => {
+  
+  // decode the token
+
+  const decoded = jwt.verify(reset_password_token, systemConfig.jwtSecret);
+  const userId = (decoded as jwt.JwtPayload).userId;
+
+  const user = await pool.query(
+    "SELECT * FROM users WHERE id = $1 AND reset_password_token = $2 AND reset_password_expires > NOW()",
+    [userId, reset_password_token]
+  );
+  if (user.rows.length === 0) {
+    
+    throw new Error("Invalid or expired password reset token");
+  }
+
+  const hashedPassword = await hashPassword(newPassword);
+  try {
+    await pool.query(
+      "UPDATE users SET password = $1, reset_password_token = NULL, reset_password_expires = NULL WHERE id = $2",
+      [hashedPassword, userId]
+    );
+    return;
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    throw new Error("Error resetting password");
+  }
+};
 // function for create or update user permissions
 export const createOrUpdateUserPermissionsService = async (
   userId: string,
@@ -486,8 +602,11 @@ export const getUserDataService = async (userId: string): Promise<User> => {
     }
 
     // replace profilepicture path by imagePath.replace(/\\/g, "/")
-    result.rows[0].profilepicture = result.rows[0].profilepicture.replace(/\\/g, "/");
-    result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`
+    result.rows[0].profilepicture = result.rows[0].profilepicture.replace(
+      /\\/g,
+      "/"
+    );
+    result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`;
 
     // remove user password field in result
     result.rows[0].password = undefined;

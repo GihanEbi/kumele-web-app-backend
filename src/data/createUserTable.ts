@@ -21,6 +21,8 @@ const createUserTable = async () => {
       is_2fa_enabled BOOLEAN NOT NULL DEFAULT false,
       my_referral_code VARCHAR(50) NOT NULL UNIQUE,
       qr_code_url TEXT,
+      reset_password_token TEXT,
+      reset_password_expires TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `;

@@ -3,14 +3,23 @@ import { systemConfig } from "../../config/systemConfig";
 import { itemAvailable } from "./ItemAvailable";
 
 export const generateToken = (userId: string, username: string): string => {
+  return jwt.sign({ userId, username }, systemConfig.jwtSecret, {
+    expiresIn: "1d",
+  });
+};
 
-  return jwt.sign({ userId, username }, systemConfig.jwtSecret, { expiresIn: "1d" });
+export const generateForgotPasswordToken = (
+  userId: string,
+  username: string
+): string => {
+  return jwt.sign({ userId, username }, systemConfig.jwtSecret, {
+    expiresIn: "1m",
+  });
 };
 
 // export const verifyToken = (token: string) => {
 //   return jwt.verify(token, systemConfig.jwtSecret);
 // };
-
 
 // export const CheckUserAccess = async (
 //   tokenString: string | null,

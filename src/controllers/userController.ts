@@ -17,6 +17,8 @@ import {
   verifyTwoFactorAuthenticationService,
   findOrCreateGoogleUser,
   googleSignInUserService,
+  sendPasswordResetEmailService,
+  resetPasswordService,
 } from "../models/userModel";
 import { pool } from "../config/db";
 import fs from "fs";
@@ -96,6 +98,61 @@ export const loginUser = async (
     res.status(statusCode).json({
       success: false,
       message: err.message || "Login failed",
+    });
+    next(err);
+  }
+};
+
+export const sendPasswordResetEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email } = req.body;
+    const user = await sendPasswordResetEmailService({ email });
+    res.status(200).json({
+      success: true,
+      message: "Password reset link successfully sent to email",
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Login failed",
+    });
+    next(err);
+  }
+};
+
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { newPassword, reset_password_token } = req.body;
+  try {
+    // check if the new password and token are provided
+    if (!newPassword || !reset_password_token) {
+      return res.status(400).json({
+        success: false,
+        message: "New password and token are required",
+      });
+    }
+
+    await resetPasswordService({ newPassword, reset_password_token });
+    res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message:
+        err.message === "jwt expired"
+          ? "expired password reset token"
+          : err.message || "Password reset failed",
     });
     next(err);
   }

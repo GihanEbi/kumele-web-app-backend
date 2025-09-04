@@ -9,6 +9,8 @@ import {
   googleSignIn,
   loginUser,
   registerUser,
+  resetPassword,
+  sendPasswordResetEmail,
   setTwoFactorAuthentication,
   setUserName,
   setUserSelectedEventCategories,
@@ -25,6 +27,8 @@ import { dynamicUpload } from "../config/multer.config";
 const userRoutes = Router();
 
 userRoutes.post("/login", loginUser);
+userRoutes.post("/send-password-reset-email", sendPasswordResetEmail); // Updated route for forgot password
+userRoutes.post("/reset-password", resetPassword); // New route for resetting password
 userRoutes.post("/google-signin", googleSignIn); // New route for Google Sign-In
 userRoutes.post("/register", registerUser);
 // Add other user-related routes here
@@ -60,7 +64,15 @@ userRoutes.post(
   verifyTwoFactorAuthentication
 );
 userRoutes.delete("/delete-account", tokenAuthHandler, deleteUserAccount);
-userRoutes.post("/set-user-event-categories", tokenAuthHandler, setUserSelectedEventCategories);
-userRoutes.get("/get-user-event-categories", tokenAuthHandler, getUserEventCategories);
+userRoutes.post(
+  "/set-user-event-categories",
+  tokenAuthHandler,
+  setUserSelectedEventCategories
+);
+userRoutes.get(
+  "/get-user-event-categories",
+  tokenAuthHandler,
+  getUserEventCategories
+);
 
 export default userRoutes;
