@@ -45,6 +45,8 @@ import createMessagesTable from "./data/createChatTable";
 import createCardsTable from "./data/createCardsTable";
 import paymentRouter from "./routes/paymentRouter";
 import createSavedCardsTable from "./data/createSavedCardsTable";
+import passkeyRouter from "./routes/passkeyRoute";
+import createPasskeysTable from "./data/createPasskeyTable";
 
 dotenv.config();
 
@@ -122,6 +124,7 @@ app.use("/api/guest-tickets", guestTicketRouter);
 app.use("/api/adverts", advertRoute);
 app.use("/api/chat", chatRouter);
 app.use("/api/payments", paymentRouter);
+app.use("/api/passkeys", passkeyRouter);
 
 // Error handling middleware
 // app.use(errorHandler);
@@ -151,6 +154,7 @@ createAdvertTable();
 createMessagesTable();
 createCardsTable();
 createSavedCardsTable();
+createPasskeysTable();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
