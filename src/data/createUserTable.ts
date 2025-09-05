@@ -4,13 +4,13 @@ const createUserTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS users (
       ID VARCHAR(10) PRIMARY KEY,
-      username VARCHAR(50),
+      username VARCHAR(50) DEFAULT '',
       fullName VARCHAR(100) NOT NULL,
       email citext NOT NULL UNIQUE,
-      password VARCHAR(100) NOT NULL,
-      gender VARCHAR(10) NOT NULL CHECK (gender IN ('male', 'female', 'Non-binary')),
-      language VARCHAR(50) NOT NULL,
-      dateOfBirth DATE NOT NULL,
+      password VARCHAR(100),
+      gender VARCHAR(10) CHECK (gender IN ('male', 'female', 'Non-binary')),
+      language VARCHAR(50) DEFAULT 'English',
+      dateOfBirth DATE,
       referralCode VARCHAR(50), 
       aboveLegalAge BOOLEAN NOT NULL DEFAULT false,
       termsAndConditionsAccepted BOOLEAN NOT NULL DEFAULT false,
@@ -23,6 +23,7 @@ const createUserTable = async () => {
       qr_code_url TEXT,
       reset_password_token TEXT,
       reset_password_expires TIMESTAMP,
+      auth_provider VARCHAR(20) NOT NULL CHECK (auth_provider IN ('local', 'google', 'facebook')) DEFAULT 'local',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `;

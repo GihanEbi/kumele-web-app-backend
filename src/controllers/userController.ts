@@ -19,6 +19,7 @@ import {
   googleSignInUserService,
   sendPasswordResetEmailService,
   resetPasswordService,
+  completeGoogleSignupService,
 } from "../models/userModel";
 import { pool } from "../config/db";
 import fs from "fs";
@@ -80,6 +81,97 @@ export const googleSignIn = async (
   }
 };
 
+export const googleSignUp = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // The frontend sends a 'token' in the request body
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ message: "Google ID token is required." });
+  }
+
+  try {
+    // 2. Find or create the user in your database
+    const user = await findOrCreateGoogleUser({ token });
+
+    res.status(200).json({
+      success: true,
+      message: "User created successfully",
+      data: user,
+    });
+  } catch (err: any) {
+    console.log("Error during Google Sign-Up:", err);
+
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "User creation failed",
+    });
+    next(err);
+  }
+};
+
+export const completeGoogleSignUp = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // The frontend sends a 'token' in the request body
+  const {
+    aboveLegalAge,
+    gender,
+    referralCode,
+    subscribedToNewsletter,
+    termsAndConditionsAccepted,
+    dateOfBirth,
+  } = req.body;
+
+  const ID = req.UserID;
+
+  // check all data provided
+  if (
+    aboveLegalAge === undefined ||
+    gender === undefined ||
+    referralCode === undefined ||
+    subscribedToNewsletter === undefined ||
+    termsAndConditionsAccepted === undefined ||
+    dateOfBirth === undefined
+  ) {
+    return res.status(400).json({ message: "All fields are required." });
+  }
+
+  try {
+    // 2. Find or create the user in your database
+    const user = await completeGoogleSignupService({
+      ID,
+      aboveLegalAge,
+      gender,
+      referralCode,
+      subscribedToNewsletter,
+      termsAndConditionsAccepted,
+      dateOfBirth,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "User signed up data successfully completed",
+      data: user,
+    });
+  } catch (err: any) {
+    console.log("Error during Google Sign-Up:", err);
+
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "User creation failed",
+    });
+    next(err);
+  }
+};
+
 export const loginUser = async (
   req: Request,
   res: Response,
@@ -88,7 +180,7 @@ export const loginUser = async (
   try {
     const { email, password } = req.body;
     console.log("Login attempt for email:", email);
-    
+
     const user = await loginUserService({ email, password });
     res.status(200).json({
       success: true,

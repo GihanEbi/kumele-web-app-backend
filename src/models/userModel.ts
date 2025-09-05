@@ -125,10 +125,71 @@ export const registerUserService = async (userData: User): Promise<User> => {
   }
 };
 
-export const findOrCreateGoogleUser = async (
-  userData: GoogleUserData
-): Promise<User> => {
-  const { email, firstName, lastName } = userData;
+export const completeGoogleSignupService = async (userData: {
+  ID: string;
+  aboveLegalAge: boolean;
+  gender: string;
+  referralCode: string;
+  subscribedToNewsletter: boolean;
+  termsAndConditionsAccepted: boolean;
+  dateOfBirth: Date;
+}): Promise<User> => {
+  // check if the email already exists
+  const existingUser = await pool.query("SELECT * FROM users WHERE id = $1", [
+    userData.ID,
+  ]);
+
+  // find the user
+  if (existingUser.rows.length === 0) {
+    return Promise.reject(`User not found: ${userData.ID}`);
+  }
+
+  // check if the gender only contain the gender constants values
+  if (!Object.values(UserConstants.gender).includes(userData.gender)) {
+    return Promise.reject(`Invalid gender: ${userData.gender}`);
+  }
+  try {
+    // update the user data
+    const result = await pool.query(
+      "UPDATE users SET aboveLegalAge = $1, gender = $2, referralCode = $3, subscribedToNewsletter = $4, termsAndConditionsAccepted = $5, dateOfBirth = $6 WHERE id = $7 RETURNING *",
+      [
+        userData.aboveLegalAge,
+        userData.gender,
+        userData.referralCode,
+        userData.subscribedToNewsletter,
+        userData.termsAndConditionsAccepted,
+        userData.dateOfBirth,
+        userData.ID,
+      ]
+    );
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error registering user:", error);
+    throw new Error("Error registering user");
+  }
+};
+
+export const findOrCreateGoogleUser = async ({
+  token,
+}: {
+  token: string;
+}): Promise<User> => {
+  // 1. Verify the Google ID token
+
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+
+  if (!payload || !payload.email) {
+    const error = new Error("Invalid Google token.");
+    (error as any).statusCode = 404;
+    throw error;
+  }
+
+  const { email, given_name, name, picture } = payload;
 
   try {
     // 1. Check if user already exists
@@ -142,21 +203,53 @@ export const findOrCreateGoogleUser = async (
     if (rows.length > 0) {
       // User exists, return them
       console.log(`User found with email: ${email}`);
-      return rows[0];
+      const error = new Error("Email exists. Please login instead.");
+      (error as any).statusCode = 400;
+      throw error;
     }
 
-    // 2. If user doesn't exist, create them
-    console.log(`No user found with email: ${email}. Creating new user.`);
+    function generateRandomCode(length: number): string {
+      const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let code = "";
+      for (let i = 0; i < length; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return code;
+    }
+    // generate the id for the user
+    const userId = await createId(id_codes.idCode.user);
+    const qrCodePayload = JSON.stringify({
+      id: userId,
+      name: given_name,
+    });
+
+    // Generate the QR code as a Data URL string.
+    const qrCodeDataUrl = await qrCode.toDataURL(qrCodePayload);
+
+    // generate the referral code for the user
+    let my_referral_code = generateRandomCode(7);
+    console.log("Generated referral code:", my_referral_code);
+
     const createUserQuery = {
       text: `
-        INSERT INTO users (fullName, lastName, email, auth_provider)
-        VALUES ($1, $2, $3, 'google')
+        INSERT INTO users (id,qr_code_url,my_referral_code, fullName, email, profilepicture, auth_provider)
+        VALUES ($1, $2, $3, $4, $5, $6, 'google')
         RETURNING *
       `,
-      values: [firstName, lastName, email],
+      values: [
+        userId,
+        qrCodeDataUrl,
+        my_referral_code,
+        name ?? "",
+        email,
+        picture || "",
+      ],
     };
 
     const result = await pool.query(createUserQuery);
+    const token = generateToken(userId, name || userId);
+    result.rows[0].token = token;
     return result.rows[0];
   } catch (error) {
     console.error("Error in findOrCreateGoogleUser:", error);
@@ -195,9 +288,6 @@ export const googleSignInUserService = async ({
     const existingUser = await pool.query(findUserQuery);
 
     if (existingUser.rows.length > 0) {
-      // User exists, return them
-      console.log(`User found with email: ${email}`);
-
       const token = generateToken(
         existingUser.rows[0].id,
         existingUser.rows[0].username
@@ -350,7 +440,6 @@ export const resetPasswordService = async ({
   newPassword: string;
   reset_password_token: string;
 }) => {
-  
   // decode the token
 
   const decoded = jwt.verify(reset_password_token, systemConfig.jwtSecret);
@@ -361,7 +450,6 @@ export const resetPasswordService = async ({
     [userId, reset_password_token]
   );
   if (user.rows.length === 0) {
-    
     throw new Error("Invalid or expired password reset token");
   }
 
@@ -606,7 +694,12 @@ export const getUserDataService = async (userId: string): Promise<User> => {
       /\\/g,
       "/"
     );
-    result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`;
+    if (
+      result.rows[0].auth_provider === "local" &&
+      result.rows[0].profilepicture
+    ) {
+      result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`;
+    }
 
     // remove user password field in result
     result.rows[0].password = undefined;

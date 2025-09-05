@@ -1,12 +1,14 @@
 import { Router } from "express";
 import {
   changePassword,
+  completeGoogleSignUp,
   createOrUpdateUserNotifications,
   deleteUserAccount,
   getUserData,
   getUserEventCategories,
   getUserNotificationStatus,
   googleSignIn,
+  googleSignUp,
   loginUser,
   registerUser,
   resetPassword,
@@ -30,6 +32,12 @@ userRoutes.post("/login", loginUser);
 userRoutes.post("/send-password-reset-email", sendPasswordResetEmail); // Updated route for forgot password
 userRoutes.post("/reset-password", resetPassword); // New route for resetting password
 userRoutes.post("/google-signin", googleSignIn); // New route for Google Sign-In
+userRoutes.post("/google-signup", googleSignUp); // New route for Google Sign-Up
+userRoutes.post(
+  "/google-signup-complete",
+  tokenAuthHandler,
+  completeGoogleSignUp
+); // New route for Google Sign-Up
 userRoutes.post("/register", registerUser);
 // Add other user-related routes here
 userRoutes.post("/update-permissions", tokenAuthHandler, updateUserPermissions);
