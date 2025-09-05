@@ -1,7 +1,10 @@
 // src/controllers/chatController.ts
 
 import { Request, Response, NextFunction } from "express";
-import { getMessagesByEventIdService ,createMessageService} from "../models/chatModel";
+import {
+  getMessagesByEventIdService,
+  createMessageService,
+} from "../models/chatModel";
 
 /**
  * Controller to get all messages for a given event ID.
@@ -43,19 +46,22 @@ export const createMessageController = async (
   next: NextFunction
 ) => {
   try {
-    const { event_id, message_text } = req.body;
-    
+    const { event_id, message_text, profilepicture } = req.body;
+
     // Assuming your tokenAuthHandler adds the user object to the request
     // e.g., req.user = { id: 'some-user-id', username: 'john' }
     // @ts-ignore (or properly type your req.user)
     // const { id: user_id, username } = req.user;
-    const user_id = req.UserID
-    const username = req.username
+    const user_id = req.UserID;
+    const username = req.username;
+
+    console.log("message user id", user_id);
 
     if (!event_id || !message_text || !user_id || !username) {
       return res.status(400).json({
         success: false,
-        message: "event_id, message_text, and user authentication (including username) are required.",
+        message:
+          "event_id, message_text, and user authentication (including username) are required.",
       });
     }
 
@@ -65,6 +71,7 @@ export const createMessageController = async (
       message_text,
       user_id,
       username,
+      profilepicture,
     });
 
     // 2. Broadcast the new message to the correct room using the attached io instance
