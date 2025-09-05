@@ -48,6 +48,10 @@ import createSavedCardsTable from "./data/createSavedCardsTable";
 import passkeyRouter from "./routes/passkeyRoute";
 import createPasskeysTable from "./data/createPasskeyTable";
 import { Server as SocketIoServer } from "socket.io";
+import createAdvertLanguageTable from "./data/createAdvertLanguageTable";
+import createAdvertDailyBudgetTable from "./data/createAdvertDailyBudgetTable";
+import createAdvertRegionTable from "./data/createAdvertRegionTable";
+import createAdvertCallToActionTable from "./data/createAdvertCallToActionTable";
 
 dotenv.config();
 
@@ -155,6 +159,10 @@ createMessagesTable();
 createCardsTable();
 createSavedCardsTable();
 createPasskeysTable();
+createAdvertLanguageTable();
+createAdvertRegionTable();
+createAdvertDailyBudgetTable();
+createAdvertCallToActionTable();
 
 // CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
 server.listen(PORT, () => {

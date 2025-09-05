@@ -30,6 +30,7 @@ const createAdvertTable = async () => {
         platform VARCHAR(100) NOT NULL CHECK (platform IN ('web', 'ios', 'android', 'all')),
         daily_budget DECIMAL(10, 2) NOT NULL,
         advert_duration INT NOT NULL,
+        save_template BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);

@@ -12,6 +12,22 @@ import {
   getAdvertsByUserId,
   getAllAdverts,
   updateAdvertById,
+  createAdvertLanguage,
+  getAllAdvertLanguages,
+  getAdvertLanguageById,
+  updateAdvertLanguageById,
+  createAdvertRegion,
+  getAllAdvertRegions,
+  getAdvertRegionById,
+  updateAdvertRegionById,
+  createAdvertDailyBudget,
+  getAllAdvertDailyBudgets,
+  getAdvertDailyBudgetById,
+  updateAdvertDailyBudgetById,
+  createAdvertCallToAction,
+  getAllAdvertCallToActions,
+  getAdvertCallToActionById,
+  updateAdvertCallToActionById,
 } from "../controllers/advertController";
 
 const advertRoute = Router();
@@ -39,6 +55,90 @@ advertRoute.put(
   "/update-advert-by-id/:advertId",
   tokenAuthHandler,
   updateAdvertById
+);
+
+// Advert Language Routes
+advertRoute.post(
+  "/create-advert-language",
+  tokenAuthHandler,
+  createAdvertLanguage
+);
+advertRoute.get(
+  "/get-all-advert-languages",
+  tokenAuthHandler,
+  getAllAdvertLanguages
+);
+advertRoute.get(
+  "/get-advert-language-by-id/:languageId",
+  tokenAuthHandler,
+  getAdvertLanguageById
+);
+advertRoute.put(
+  "/update-advert-language-by-id/:languageId",
+  tokenAuthHandler,
+  updateAdvertLanguageById
+);
+
+// Advert Region Routes
+advertRoute.post("/create-advert-region", tokenAuthHandler, createAdvertRegion);
+advertRoute.get(
+  "/get-all-advert-regions",
+  tokenAuthHandler,
+  getAllAdvertRegions
+);
+advertRoute.get(
+  "/get-advert-region-by-id/:regionId",
+  tokenAuthHandler,
+  getAdvertRegionById
+);
+advertRoute.put(
+  "/update-advert-region-by-id/:regionId",
+  tokenAuthHandler,
+  updateAdvertRegionById
+);
+
+// Advert Daily Budget Routes
+advertRoute.post(
+  "/create-advert-daily-budget",
+  tokenAuthHandler,
+  createAdvertDailyBudget
+);
+advertRoute.get(
+  "/get-all-advert-daily-budgets",
+  tokenAuthHandler,
+  getAllAdvertDailyBudgets
+);
+advertRoute.get(
+  "/get-advert-daily-budget-by-id/:budgetId",
+  tokenAuthHandler,
+  getAdvertDailyBudgetById
+);
+advertRoute.put(
+  "/update-advert-daily-budget-by-id/:budgetId",
+  tokenAuthHandler,
+  updateAdvertDailyBudgetById
+);
+
+// Advert Call To Action Routes
+advertRoute.post(
+  "/create-advert-call-to-action",
+  tokenAuthHandler,
+  createAdvertCallToAction
+);
+advertRoute.get(
+  "/get-all-advert-call-to-actions",
+  tokenAuthHandler,
+  getAllAdvertCallToActions
+);
+advertRoute.get(
+  "/get-advert-call-to-action-by-id/:id",
+  tokenAuthHandler,
+  getAdvertCallToActionById
+);
+advertRoute.put(
+  "/update-advert-call-to-action-by-id/:id",
+  tokenAuthHandler,
+  updateAdvertCallToActionById
 );
 
 export default advertRoute;
