@@ -47,66 +47,66 @@ import paymentRouter from "./routes/paymentRouter";
 import createSavedCardsTable from "./data/createSavedCardsTable";
 import passkeyRouter from "./routes/passkeyRoute";
 import createPasskeysTable from "./data/createPasskeyTable";
+import { Server as SocketIoServer } from "socket.io";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001; // Your defined port
 
 const app = express();
 
-// middlewares
-// app.use(cors({ origin: 'http://localhost:3000' }));
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(errorHandler);
+const server = http.createServer(app); // Create the HTTP server and pass the Express app
 
-// --- Socket.io Integration ---
-const httpServer = http.createServer(app);
-const io = new Server(httpServer, {
+// Configure CORS for Socket.io and HTTP
+const io = new SocketIoServer(server, {
+  // Socket.io attached to the 'server' instance
   cors: {
-    origin: "http://localhost:3000", // Your Next.js app's URL
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
+// ... (Your Socket.io connection handling logic)
+// Socket.io connection handling
 io.on("connection", (socket) => {
-  console.log(`✨ User connected: ${socket.id}`);
+  console.log(`User connected: ${socket.id}`); // <--- This should log
 
-  // Event to join a chat room based on eventId
+  // Authenticate socket connection if needed (e.g., using JWT from socket.handshake.auth.token)
+  // ... (commented-out auth block)
+
   socket.on("joinRoom", (eventId: string) => {
     socket.join(eventId);
-    console.log(`User ${socket.id} joined room ${eventId}`);
+    console.log(`User ${socket.id} joined room: ${eventId}`); // <--- This should log
   });
 
-  // Event to handle sending a message
-  socket.on("sendMessage", async (message: IMessage) => {
-    try {
-      // 1. Save the message to the database
-      const savedMessage = await createMessageService(message);
-
-      // 2. Broadcast the saved message to everyone in that specific event room
-      io.to(message.event_id).emit("receiveMessage", savedMessage);
-    } catch (error) {
-      console.error("Error handling message:", error);
-      // Optional: emit an error back to the sender
-      socket.emit("messageError", "Failed to send message.");
-    }
+  socket.on("leaveRoom", (eventId: string) => {
+    socket.leave(eventId);
+    console.log(`User ${socket.id} left room: ${eventId}`);
   });
 
-  // Handle user disconnection
-  socket.on("disconnect", () => {
-    console.log(`🔥 User disconnected: ${socket.id}`);
+  socket.on("disconnect", (reason) => {
+    console.log(`User disconnected: ${socket.id}, reason: ${reason}`);
   });
 });
 
-// !!! --- NEW MIDDLEWARE --- !!!
-// This middleware makes the `io` instance available on `req.io` in all our controllers
+// middlewares (order matters for some)
 app.use((req, res, next) => {
-  req.io = io;
+  // @ts-ignore
+  req.io = io; // This needs to be defined for Express's Request type
   next();
 });
 
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files for uploads
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 // routes
@@ -126,10 +126,10 @@ app.use("/api/chat", chatRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/passkeys", passkeyRouter);
 
-// Error handling middleware
-// app.use(errorHandler);
+// Error handling middleware (place this after all routes)
+app.use(errorHandler); // <-- Move this after all routes
 
-// create table if it doesn't exist
+// create table if it doesn't exist (these calls are fine)
 createUserTable();
 createIdTable();
 createEmailOtpTable();
@@ -156,6 +156,7 @@ createCardsTable();
 createSavedCardsTable();
 createPasskeysTable();
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+// CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
+server.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT} with Socket.io`);
 });

@@ -87,6 +87,8 @@ export const loginUser = async (
 ) => {
   try {
     const { email, password } = req.body;
+    console.log("Login attempt for email:", email);
+    
     const user = await loginUserService({ email, password });
     res.status(200).json({
       success: true,
