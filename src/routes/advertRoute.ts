@@ -28,6 +28,7 @@ import {
   getAllAdvertCallToActions,
   getAdvertCallToActionById,
   updateAdvertCallToActionById,
+  getSavedAdvertsByUserId,
 } from "../controllers/advertController";
 
 const advertRoute = Router();
@@ -39,6 +40,11 @@ advertRoute.post(
   createAdvertImage
 );
 advertRoute.post("/create-advert", tokenAuthHandler, createAdvert);
+advertRoute.get(
+  "/get-saved-adverts-by-user-id",
+  tokenAuthHandler,
+  getSavedAdvertsByUserId
+);
 advertRoute.get("/get-all-adverts", tokenAuthHandler, getAllAdverts);
 advertRoute.get("/get-advert-by-id/:advertId", tokenAuthHandler, getAdvertById);
 advertRoute.get(

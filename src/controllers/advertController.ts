@@ -17,6 +17,7 @@ import {
   getAllAdvertLanguagesService,
   getAllAdvertRegionsService,
   getAllAdvertsService,
+  getSavedAdvertsByUserIdService,
   updateAdvertByIdService,
   updateAdvertCallToActionByIdService,
   updateAdvertDailyBudgetByIdService,
@@ -61,9 +62,10 @@ export const createAdvert = async (
   next: NextFunction
 ) => {
   const advertData = req.body;
+  const user_id = req.UserID;
 
   try {
-    const newAdvert = await createAdvertService(advertData);
+    const newAdvert = await createAdvertService({ user_id, advertData });
     res
       .status(201)
       .json({ message: "Advert created successfully.", advert: newAdvert });
@@ -72,6 +74,29 @@ export const createAdvert = async (
     res.status(statusCode).json({
       success: false,
       message: err.message || "Login failed",
+    });
+    next(err);
+  }
+};
+
+// get saved advert id list by user id
+export const getSavedAdvertsByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+    const savedAdverts = await getSavedAdvertsByUserIdService(userId);
+    res.status(200).json({
+      success: true,
+      data: savedAdverts,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Error retrieving saved adverts",
     });
     next(err);
   }

@@ -277,22 +277,26 @@ export const createUserSubscriptionSchema = Joi.object({
 
 // create advert
 export const createAdvertSchema = Joi.object({
-  user_id: Joi.string().required().label("User ID"),
   category_id: Joi.string().required().label("Category ID"),
   advert_image_type: Joi.string()
     .valid("static", "carousel")
     .required()
     .label("Advert Image Type"),
   advert_image_url_1: Joi.string().required().label("Advert Image URL 1"),
-  advert_image_url_2: Joi.string().optional().empty("").label("Advert Image URL 2"),
-  advert_image_url_3: Joi.string().optional().empty("").label("Advert Image URL 3"),
+  advert_image_url_2: Joi.string()
+    .optional()
+    .empty("")
+    .label("Advert Image URL 2"),
+  advert_image_url_3: Joi.string()
+    .optional()
+    .empty("")
+    .label("Advert Image URL 3"),
   call_to_action: Joi.string().required().label("Call to Action"),
   call_to_action_link: Joi.string().required().label("Call to Action Link"),
   second_call_to_action: Joi.string().required().label("Second Call to Action"),
   second_call_to_action_link: Joi.string()
     .required()
     .label("Second Call to Action Link"),
-  saved_campaign: Joi.string().required().label("Saved Campaign"),
   campaign_name: Joi.string().required().label("Campaign Name"),
   title: Joi.string().required().label("Title"),
   description: Joi.string().required().label("Description"),
@@ -303,18 +307,24 @@ export const createAdvertSchema = Joi.object({
     .required()
     .label("Gender"),
   region: Joi.string().required().label("Region"),
-  advert_location: Joi.string().required().label("Advert Location"),
+  advert_location: Joi.array()
+    .items(Joi.string()).min(1).max(3)
+    .required()
+    .label("Advert Location"),
   language: Joi.string().required().label("Language"),
   advert_placement: Joi.string()
     .valid("general", "notification", "both")
     .required()
     .label("Advert Placement"),
-  platform: Joi.string()
-    .valid("web", "ios", "android", "all")
+  platform: Joi.array()
+    .items(Joi.string().valid("web", "ios", "android", "all"))
+    .min(1)
     .required()
     .label("Platform"),
+  daily_budget_type: Joi.string().required().label("Daily Budget Type"),
   daily_budget: Joi.number().min(0).required().label("Daily Budget"),
   advert_duration: Joi.number().min(0).required().label("Advert Duration"),
+  save_template: Joi.boolean().required().label("Save as Template"),
 });
 
 // update advert
@@ -325,8 +335,14 @@ export const updateAdvertSchema = Joi.object({
     .required()
     .label("Advert Image Type"),
   advert_image_url_1: Joi.string().required().label("Advert Image URL 1"),
-  advert_image_url_2: Joi.string().optional().empty("").label("Advert Image URL 2"),
-  advert_image_url_3: Joi.string().optional().empty("").label("Advert Image URL 3"),
+  advert_image_url_2: Joi.string()
+    .optional()
+    .empty("")
+    .label("Advert Image URL 2"),
+  advert_image_url_3: Joi.string()
+    .optional()
+    .empty("")
+    .label("Advert Image URL 3"),
   call_to_action: Joi.string().required().label("Call to Action"),
   call_to_action_link: Joi.string().required().label("Call to Action Link"),
   second_call_to_action: Joi.string().required().label("Second Call to Action"),

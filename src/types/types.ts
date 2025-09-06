@@ -240,7 +240,6 @@ export interface CreateUserSubscription {
 
 // create advert
 export interface CreateAdvert {
-  user_id: string;
   category_id: string;
   advert_image_type: string;
   advert_image_url_1: string;
@@ -250,18 +249,19 @@ export interface CreateAdvert {
   call_to_action_link: string;
   second_call_to_action: string;
   second_call_to_action_link: string;
-  saved_campaign: string;
   campaign_name: string;
   title: string;
   description: string;
   audience_min_age: number;
   audience_max_age: number;
-  gender: 'male' | 'female' | 'Non-binary';
+  gender: "male" | "female" | "Non-binary";
   region: string;
   advert_location: string;
-  language: string;
-  advert_placement: 'general' | 'notification' | 'both';
-  platform: 'web' | 'ios' | 'android' | 'all';
+  language: string[];
+  advert_placement: "general" | "notification" | "both";
+  platform: string[];
+  daily_budget_type: string;
   daily_budget: number;
   advert_duration: number;
+  save_template?: boolean;
 }

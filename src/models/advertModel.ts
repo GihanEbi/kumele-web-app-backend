@@ -5,9 +5,13 @@ import { createId } from "../service/idGenerator/idGenerator";
 import { validation } from "../service/schemaValidetionService/schemaValidetionService";
 import { CreateAdvert } from "../types/types";
 
-export const createAdvertService = async (
-  advertData: CreateAdvert
-): Promise<CreateAdvert> => {
+export const createAdvertService = async ({
+  user_id,
+  advertData,
+}: {
+  user_id: string;
+  advertData: CreateAdvert;
+}): Promise<CreateAdvert> => {
   // check all input data with schema validation in Joi
   let checkData = validation(createAdvertSchema, advertData);
   if (checkData !== null) {
@@ -21,7 +25,7 @@ export const createAdvertService = async (
   try {
     // check if user available and active user in user table
     const user = await pool.query("SELECT * FROM users WHERE id = $1", [
-      advertData.user_id,
+      user_id,
     ]);
     if (user.rowCount === 0) {
       const error = new Error("User not found or inactive");
@@ -46,15 +50,13 @@ export const createAdvertService = async (
     // insert the advert data into the database
     const result = await pool.query(
       `INSERT INTO adverts (
-            id, user_id, category_id, advert_image_type, advert_image_url_1, 
-            advert_image_url_2, advert_image_url_3, call_to_action, 
-            call_to_action_link, second_call_to_action, second_call_to_action_link, 
-            saved_campaign, campaign_name, title, description, audience_min_age, 
-            audience_max_age, gender, region, advert_location, language, advert_placement, platform, daily_budget, advert_duration
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)`,
+        id, user_id, category_id, advert_image_type, advert_image_url_1, advert_image_url_2, advert_image_url_3,
+        call_to_action, call_to_action_link, second_call_to_action, second_call_to_action_link,
+        campaign_name, title, description, audience_min_age, audience_max_age, gender, region, advert_location, language, advert_placement, platform, daily_budget_type, daily_budget, advert_duration, save_template
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)`,
       [
         advertId,
-        advertData.user_id,
+        user_id,
         advertData.category_id,
         advertData.advert_image_type,
         advertData.advert_image_url_1,
@@ -64,7 +66,6 @@ export const createAdvertService = async (
         advertData.call_to_action_link,
         advertData.second_call_to_action,
         advertData.second_call_to_action_link,
-        advertData.saved_campaign,
         advertData.campaign_name,
         advertData.title,
         advertData.description,
@@ -76,14 +77,45 @@ export const createAdvertService = async (
         advertData.language,
         advertData.advert_placement,
         advertData.platform,
+        advertData.daily_budget_type,
         advertData.daily_budget,
         advertData.advert_duration,
+        advertData.save_template,
       ]
     );
     return result.rows[0];
   } catch (error) {
     console.error("Error creating event:", error);
     throw new Error("Error creating event");
+  }
+};
+
+// get saved advert id by user id and return array with advert id and advert name
+export const getSavedAdvertsByUserIdService = async (
+  userId: string
+): Promise<{ id: string; title: string }[]> => {
+  // check if userId is provided
+  if (!userId) {
+    return Promise.reject(new Error("User ID is required"));
+  }
+
+  // check if the user is in user table
+  const userCheck = await pool.query(`SELECT * FROM users WHERE id = $1`, [
+    userId,
+  ]);
+  if (userCheck.rows.length === 0) {
+    return Promise.reject(new Error("User not found"));
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT id, title FROM adverts WHERE user_id = $1",
+      [userId]
+    );
+    return result.rows;
+  } catch (error) {
+    console.error("Error retrieving saved adverts by user ID:", error);
+    throw new Error("Error retrieving saved adverts by user ID");
   }
 };
 
