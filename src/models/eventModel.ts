@@ -61,9 +61,27 @@ export const createEventService = async (
 };
 
 // This function retrieves all events from the database
-export const getAllEventsService = async (): Promise<EventCategory[]> => {
+export const getAllEventsService = async () => {
   try {
-    const result = await pool.query(`SELECT * FROM events`);
+    // get all events with all the user data as a new array
+    const result = await pool.query(`
+  SELECT 
+    e.*, 
+    json_build_object(
+      'id', u.id,
+      'username', u.username,
+      'fullName', u.fullName,
+      'email', u.email,
+      'gender', u.gender,
+      'language', u.language,
+      'dateOfBirth', u.dateOfBirth,
+      'profilePicture', u.profilePicture,
+      'about_me', u.about_me
+    ) AS user
+  FROM events e
+  JOIN users u ON e.user_id = u.id
+`);
+
     return result.rows;
   } catch (error) {
     console.error("Error retrieving events:", error);

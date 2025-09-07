@@ -17,7 +17,6 @@ export const tokenAuthHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  
   const token = req.headers["authorization"]?.split(" ")[0]; // Extract token from Authorization header
 
   if (!token) {
@@ -32,7 +31,9 @@ export const tokenAuthHandler = async (
       !("userId" in decoded) ||
       !decoded.userId
     ) {
-      return res.status(401).json({ message: "Unauthorized" });
+      console.log("Invalid token payload:", decoded);
+      
+      return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
     req.UserID = (decoded as jwt.JwtPayload).userId;
@@ -40,7 +41,7 @@ export const tokenAuthHandler = async (
     next();
   } catch (error) {
     console.log(error);
-    
-    return res.status(401).json({ message: "Unauthorized" });
+
+    return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 };

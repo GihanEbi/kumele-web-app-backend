@@ -302,8 +302,8 @@ export const createAdvertSchema = Joi.object({
   description: Joi.string().required().label("Description"),
   audience_min_age: Joi.number().min(0).required().label("Audience Min Age"),
   audience_max_age: Joi.number().min(0).required().label("Audience Max Age"),
-  gender: Joi.string()
-    .valid("male", "female", "Non-binary")
+  gender: Joi.array()
+    .items(Joi.string().valid("male", "female", "Non-binary"))
     .required()
     .label("Gender"),
   region: Joi.string().required().label("Region"),

@@ -21,7 +21,7 @@ const createAdvertTable = async () => {
         description TEXT NOT NULL,
         audience_min_age INT NOT NULL,
         audience_max_age INT NOT NULL,
-        gender VARCHAR(10) NOT NULL CHECK (gender IN ('male', 'female', 'Non-binary')),
+        gender TEXT[] NOT NULL CHECK (gender <@ ARRAY['male', 'female', 'other']),
         region VARCHAR(100) NOT NULL REFERENCES advert_region(id),
         advert_location TEXT[] NOT NULL,
         language VARCHAR(100) NOT NULL REFERENCES advert_languages(id),

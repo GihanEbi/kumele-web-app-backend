@@ -25,6 +25,7 @@ import {
   updateAdvertRegionByIdService,
 } from "../models/advertModel";
 import fs from "fs";
+import { systemConfig } from "../config/systemConfig";
 
 // this function is for create the advert image and return its path
 export const createAdvertImage = async (
@@ -41,10 +42,13 @@ export const createAdvertImage = async (
       });
     }
     const normalizedPath = req.file.path.replace(/\\/g, "/");
+    // add the full URL to the path
+    const fullUrl = `${systemConfig.baseUrl}/${normalizedPath}`;
 
     res.status(201).json({
+      success: true,
       message: "advert image created successfully.",
-      advert_img_url: normalizedPath,
+      advert_img_url: fullUrl,
     });
   } catch (err: any) {
     const statusCode = err.statusCode || 500;
@@ -70,6 +74,8 @@ export const createAdvert = async (
       .status(201)
       .json({ message: "Advert created successfully.", advert: newAdvert });
   } catch (err: any) {
+    console.log(err);
+    
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,

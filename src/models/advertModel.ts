@@ -20,8 +20,6 @@ export const createAdvertService = async ({
     (error as any).statusCode = 400;
     throw error;
   }
-
-  console.log(advertData);
   try {
     // check if user available and active user in user table
     const user = await pool.query("SELECT * FROM users WHERE id = $1", [
@@ -93,7 +91,7 @@ export const createAdvertService = async ({
 // get saved advert id by user id and return array with advert id and advert name
 export const getSavedAdvertsByUserIdService = async (
   userId: string
-): Promise<{ id: string; title: string }[]> => {
+): Promise<{ label: string; value: string }[]> => {
   // check if userId is provided
   if (!userId) {
     return Promise.reject(new Error("User ID is required"));
@@ -112,7 +110,10 @@ export const getSavedAdvertsByUserIdService = async (
       "SELECT id, title FROM adverts WHERE user_id = $1",
       [userId]
     );
-    return result.rows;
+    return result.rows.map((row) => ({
+      label: row.title,
+      value: row.id,
+    }));
   } catch (error) {
     console.error("Error retrieving saved adverts by user ID:", error);
     throw new Error("Error retrieving saved adverts by user ID");
@@ -281,15 +282,16 @@ export const createAdvertRegionService = async (regionData: {
 
 // get all advert regions function
 export const getAllAdvertRegionsService = async (): Promise<
-  { id: string; value: string }[]
+  { label: string; value: string }[]
 > => {
   try {
     const result = await pool.query("SELECT * FROM advert_region"); // reshape result with label and value with only is_active true
+
     return result.rows
       .filter((row) => row.is_active)
       .map((row) => ({
-        id: row.id,
-        value: row.name,
+        label: row.name,
+        value: row.id,
       }));
   } catch (error) {
     console.error("Error retrieving all advert regions:", error);
@@ -392,7 +394,7 @@ export const createAdvertLanguageService = async (languageData: {
 
 // get all advert languages function
 export const getAllAdvertLanguagesService = async (): Promise<
-  { id: string; value: string }[]
+  { label: string; value: string }[]
 > => {
   try {
     const result = await pool.query("SELECT * FROM advert_languages");
@@ -400,8 +402,8 @@ export const getAllAdvertLanguagesService = async (): Promise<
     return result.rows
       .filter((row) => row.is_active)
       .map((row) => ({
-        id: row.id,
-        value: row.name,
+        label: row.name,
+        value: row.id,
       }));
   } catch (error) {
     console.error("Error retrieving all advert languages:", error);
@@ -504,7 +506,7 @@ export const createAdvertDailyBudgetService = async (budgetData: {
 
 // get all advert daily budgets function
 export const getAllAdvertDailyBudgetsService = async (): Promise<
-  { id: string; value: string }[]
+  { label: string; value: string }[]
 > => {
   try {
     const result = await pool.query("SELECT * FROM advert_daily_budget");
@@ -512,8 +514,8 @@ export const getAllAdvertDailyBudgetsService = async (): Promise<
     return result.rows
       .filter((row) => row.is_active)
       .map((row) => ({
-        id: row.id,
-        value: row.name,
+        value: row.id,
+        label: row.name,
       }));
   } catch (error) {
     console.error("Error retrieving all advert daily budgets:", error);
@@ -617,7 +619,7 @@ export const createAdvertCallToActionService = async (ctaData: {
 
 // get all advert call to actions function
 export const getAllAdvertCallToActionsService = async (): Promise<
-  { id: string; value: string }[]
+  { label: string; value: string }[]
 > => {
   try {
     const result = await pool.query("SELECT * FROM advert_call_to_actions");
@@ -625,8 +627,8 @@ export const getAllAdvertCallToActionsService = async (): Promise<
     return result.rows
       .filter((row) => row.is_active)
       .map((row) => ({
-        id: row.id,
-        value: row.name,
+        label: row.name,
+        value: row.id,
       }));
   } catch (error) {
     console.error("Error retrieving all advert call to actions:", error);
