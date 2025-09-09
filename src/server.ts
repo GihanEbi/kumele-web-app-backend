@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+
+console.log('EMAIL_API_KEY:', process.env.EMAIL_API_KEY); // temporary test
 import express from "express";
 import cors from "cors";
 import http from "http";
