@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import http from "http";
@@ -5,7 +6,6 @@ import { Server } from "socket.io";
 import path from "path";
 import userRoutes from "./routes/userRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
-import dotenv from "dotenv";
 import createUserTable from "./data/createUserTable";
 import createIdTable from "./data/createIdTable";
 import createEmailOtpTable from "./data/createEmailOtpTable";
