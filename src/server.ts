@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 
+dotenv.config();
 console.log('EMAIL_API_KEY:', process.env.EMAIL_API_KEY); // temporary test
 import express from "express";
 import cors from "cors";
@@ -55,7 +56,6 @@ import createAdvertDailyBudgetTable from "./data/createAdvertDailyBudgetTable";
 import createAdvertRegionTable from "./data/createAdvertRegionTable";
 import createAdvertCallToActionTable from "./data/createAdvertCallToActionTable";
 
-dotenv.config();
 
 const PORT = process.env.PORT || 5001; // Your defined port
 
