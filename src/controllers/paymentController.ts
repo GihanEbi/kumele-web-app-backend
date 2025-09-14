@@ -28,17 +28,17 @@ export const createPaypalOrderController = async (req: Request, res: Response) =
       },
     ],
     // If vault is true, instruct PayPal to set up a token for saving the card
-    ...(vault && {
-        payment_source: {
-            card: {
-                attributes: {
-                    vault: {
-                        store_in_vault: 'ON_SUCCESS',
-                    },
-                },
-            },
-        },
-    }),
+    // ...(vault && {
+    //     payment_source: {
+    //         card: {
+    //             attributes: {
+    //                 vault: {
+    //                     store_in_vault: 'ON_SUCCESS',
+    //                 },
+    //             },
+    //         },
+    //     },
+    // }),
   });
 
   try {

@@ -55,6 +55,8 @@ import createAdvertLanguageTable from "./data/createAdvertLanguageTable";
 import createAdvertDailyBudgetTable from "./data/createAdvertDailyBudgetTable";
 import createAdvertRegionTable from "./data/createAdvertRegionTable";
 import createAdvertCallToActionTable from "./data/createAdvertCallToActionTable";
+import stripeRouter from "./routes/stripeRoute";
+import createStripePaymentsTable from "./data/createStripePaymentsTable";
 
 
 const PORT = process.env.PORT || 5001; // Your defined port
@@ -131,6 +133,7 @@ app.use("/api/adverts", advertRoute);
 app.use("/api/chat", chatRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/passkeys", passkeyRouter);
+app.use("/api/stripe", stripeRouter);
 
 // Error handling middleware (place this after all routes)
 app.use(errorHandler); // <-- Move this after all routes
@@ -165,6 +168,7 @@ createAdvertLanguageTable();
 createAdvertRegionTable();
 createAdvertDailyBudgetTable();
 createAdvertCallToActionTable();
+createStripePaymentsTable();
 
 // CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
 server.listen(PORT, () => {
