@@ -236,6 +236,7 @@ export interface GuestTicket {
 export interface CreateUserSubscription {
   user_id: string;
   subscription_id: string;
+  stripe_payment_intent_id: string;
 }
 
 // create advert

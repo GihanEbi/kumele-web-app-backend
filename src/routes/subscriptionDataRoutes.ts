@@ -10,6 +10,7 @@ import {
 import {
   activateUserSubscriptionController,
   createUserSubscriptionController,
+  deactivateUserSubscriptionController,
   getAllUserSubscriptionsController,
 } from "../controllers/userSubscriptionController";
 
@@ -57,6 +58,13 @@ subscriptionDataRouter.post(
   "/activate-user-subscription/:subscriptionId",
   tokenAuthHandler,
   activateUserSubscriptionController
+);
+
+// deactivate subscription
+subscriptionDataRouter.post(
+  "/deactivate-user-subscription/:subscriptionId",
+  tokenAuthHandler,
+  deactivateUserSubscriptionController
 );
 
 export default subscriptionDataRouter;

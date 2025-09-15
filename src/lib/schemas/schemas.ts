@@ -273,6 +273,7 @@ export const guestTicketSchema = Joi.object({
 export const createUserSubscriptionSchema = Joi.object({
   user_id: Joi.string().required().label("User ID"),
   subscription_id: Joi.string().required().label("Subscription ID"),
+  stripe_payment_intent_id: Joi.string().required().label("Stripe Payment Intent ID"),
 });
 
 // create advert
