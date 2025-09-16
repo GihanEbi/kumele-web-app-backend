@@ -273,7 +273,9 @@ export const guestTicketSchema = Joi.object({
 export const createUserSubscriptionSchema = Joi.object({
   user_id: Joi.string().required().label("User ID"),
   subscription_id: Joi.string().required().label("Subscription ID"),
-  stripe_payment_intent_id: Joi.string().required().label("Stripe Payment Intent ID"),
+  stripe_payment_intent_id: Joi.string()
+    .required()
+    .label("Stripe Payment Intent ID"),
 });
 
 // create advert
@@ -309,7 +311,9 @@ export const createAdvertSchema = Joi.object({
     .label("Gender"),
   region: Joi.string().required().label("Region"),
   advert_location: Joi.array()
-    .items(Joi.string()).min(1).max(3)
+    .items(Joi.string())
+    .min(1)
+    .max(3)
     .required()
     .label("Advert Location"),
   language: Joi.string().required().label("Language"),
@@ -373,4 +377,20 @@ export const updateAdvertSchema = Joi.object({
     .label("Platform"),
   daily_budget: Joi.number().min(0).required().label("Daily Budget"),
   advert_duration: Joi.number().min(0).required().label("Advert Duration"),
+});
+
+// create notification schema
+export const createNotificationSchema = Joi.object({
+  title: Joi.string().required().label("Title"),
+  event_category_id: Joi.string().required().label("Event Category ID"),
+  message: Joi.string().required().label("Message"),
+  type: Joi.string().required().label("Type"),
+  created_by: Joi.string().required().label("Created By"),
+});
+
+// create user app notification schema
+export const createUserAppNotificationSchema = Joi.object({
+  notification_id: Joi.string().required().label("Notification ID"),
+  user_id: Joi.string().required().label("User ID"),
+  status: Joi.string().valid("read", "unread").required().label("Status"),
 });

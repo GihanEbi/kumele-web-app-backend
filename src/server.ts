@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 
 dotenv.config();
-console.log('EMAIL_API_KEY:', process.env.EMAIL_API_KEY); // temporary test
 import express from "express";
 import cors from "cors";
 import http from "http";
@@ -57,7 +56,9 @@ import createAdvertRegionTable from "./data/createAdvertRegionTable";
 import createAdvertCallToActionTable from "./data/createAdvertCallToActionTable";
 import stripeRouter from "./routes/stripeRoute";
 import createStripePaymentsTable from "./data/createStripePaymentsTable";
-
+import createUserAppNotificationTable from "./data/createUserAppNotificationTable";
+import createNotificationTable from "./data/createNotificationTable";
+import notificationRoute from "./routes/notificationRoutes";
 
 const PORT = process.env.PORT || 5001; // Your defined port
 
@@ -69,7 +70,8 @@ const server = http.createServer(app); // Create the HTTP server and pass the Ex
 const io = new SocketIoServer(server, {
   // Socket.io attached to the 'server' instance
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://109.199.125.163:3000",
+    // origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -134,6 +136,7 @@ app.use("/api/chat", chatRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/passkeys", passkeyRouter);
 app.use("/api/stripe", stripeRouter);
+app.use("/api/notifications", notificationRoute);
 
 // Error handling middleware (place this after all routes)
 app.use(errorHandler); // <-- Move this after all routes
@@ -169,6 +172,8 @@ createAdvertRegionTable();
 createAdvertDailyBudgetTable();
 createAdvertCallToActionTable();
 createStripePaymentsTable();
+createUserAppNotificationTable();
+createNotificationTable();
 
 // CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
 server.listen(PORT, () => {

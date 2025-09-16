@@ -266,3 +266,19 @@ export interface CreateAdvert {
   advert_duration: number;
   save_template?: boolean;
 }
+
+// notification types
+export interface NotificationType {
+  title: string;
+  event_category_id: string;
+  message: string;
+  type: string;
+  created_by: string;
+}
+
+// user app notification
+export interface UserAppNotification {
+  notification_id: string;
+  user_id: string;
+  status: string;
+}

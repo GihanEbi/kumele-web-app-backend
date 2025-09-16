@@ -8,6 +8,10 @@ import {
   updateEventByIdService,
 } from "../models/eventModel";
 import fs from "fs";
+import {
+  createNotification,
+  createUserAppNotification,
+} from "../models/notificationModel";
 
 export const createEvent = async (
   req: Request,
@@ -26,18 +30,33 @@ export const createEvent = async (
     req.body.event_image_url = req.file.path;
     req.body.user_id = user_id;
 
-    console.log(req.body);
-
     // Call the createEventService to create the event
     const newEvent = await createEventService(req.body);
+    
 
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Event created successfully.",
-        event: newEvent,
-      });
+    // notification logic can be added here
+    const notificationData = {
+      title: newEvent.event_name,
+      message: `A new event has been created. Your event under review.`,
+      type: "event_creation",
+      event_category_id: newEvent.category_id,
+      created_by: user_id,
+    };
+    const notifications = await createNotification(notificationData);
+
+    // user app notification logic can be added here
+    const userAppNotificationData = {
+      user_id: user_id,
+      notification_id: notifications.id,
+      status: "unread",
+    };
+    await createUserAppNotification(userAppNotificationData);
+
+    res.status(201).json({
+      success: true,
+      message: "Event created successfully.",
+      event: newEvent,
+    });
   } catch (err) {
     res.status(500).json({
       success: false,

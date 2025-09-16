@@ -14,5 +14,7 @@ export class id_codes {
     advertLanguage: "ADL",
     advertDailyBudget: "ADB",
     advertCallToAction: "ADCTA",
+    notification: "NOT",
+    userAppNotification: "UAN",
   };
 }
