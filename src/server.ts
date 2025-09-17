@@ -59,6 +59,13 @@ import createStripePaymentsTable from "./data/createStripePaymentsTable";
 import createUserAppNotificationTable from "./data/createUserAppNotificationTable";
 import createNotificationTable from "./data/createNotificationTable";
 import notificationRoute from "./routes/notificationRoutes";
+import productRoute from "./routes/productRoute";
+import { createProduct } from "./models/productModel";
+import createProductTable from "./data/createProductTable";
+import userCartRoute from "./routes/userCartRoute";
+import createUserCartTable from "./data/createUserCartTable";
+import purchaseHistoryRoute from "./routes/purchaseHistoryRoutes";
+import createUserParchesHistoryTable from "./data/createUserParchesHistoryTable";
 
 const PORT = process.env.PORT || 5001; // Your defined port
 
@@ -109,10 +116,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "http://109.199.125.163:3000",
-    ],
+    origin: ["http://localhost:3000", "http://109.199.125.163:3000"],
     credentials: true,
   })
 );
@@ -141,6 +145,9 @@ app.use("/api/payments", paymentRouter);
 app.use("/api/passkeys", passkeyRouter);
 app.use("/api/stripe", stripeRouter);
 app.use("/api/notifications", notificationRoute);
+app.use("/api/products", productRoute);
+app.use("/api/cart", userCartRoute);
+app.use("/api/purchase-history", purchaseHistoryRoute);
 
 // Error handling middleware (place this after all routes)
 app.use(errorHandler); // <-- Move this after all routes
@@ -178,6 +185,9 @@ createAdvertCallToActionTable();
 createStripePaymentsTable();
 createUserAppNotificationTable();
 createNotificationTable();
+createProductTable();
+createUserCartTable();
+createUserParchesHistoryTable();
 
 // CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
 server.listen(PORT, () => {

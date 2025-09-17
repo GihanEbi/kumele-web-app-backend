@@ -16,5 +16,8 @@ export class id_codes {
     advertCallToAction: "ADCTA",
     notification: "NOT",
     userAppNotification: "UAN",
+    product: "PR",
+    userCart: "UC",
+    userPurchasesHistory: "UPH",
   };
 }

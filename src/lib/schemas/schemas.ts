@@ -3,6 +3,7 @@ import Joi from "joi";
 import { UserConstants } from "../../constants/userConstants";
 import { CustomerSupportConstants } from "../../constants/customerSupportConstants";
 import { EventConstants } from "../../constants/eventConstants";
+import { productConstants } from "../../constants/productConstants";
 
 export const userRegistrationSchema = Joi.object({
   fullName: Joi.string().min(3).max(100).required().label("Name"),
@@ -393,4 +394,28 @@ export const createUserAppNotificationSchema = Joi.object({
   notification_id: Joi.string().required().label("Notification ID"),
   user_id: Joi.string().required().label("User ID"),
   status: Joi.string().valid("read", "unread").required().label("Status"),
+});
+
+// create product schema
+export const createProductSchema = Joi.object({
+  name: Joi.string().required().label("Product Name"),
+  description: Joi.string().required().label("Product Description"),
+  type: Joi.string()
+    .valid(...Object.values(productConstants.productTypes))
+    .required()
+    .label("Product Type"),
+  price: Joi.number().precision(2).required().label("Product Price"),
+});
+
+// create user cart schema
+export const createUserCartSchema = Joi.object({
+  user_id: Joi.string().required().label("User ID"),
+  product_id: Joi.string().required().label("Product ID"),
+  quantity: Joi.number().min(1).required().label("Quantity"),
+});
+
+// create user purchase history schema
+export const createUserPurchaseHistorySchema = Joi.object({
+  user_id: Joi.string().required().label("User ID"),
+  product_id: Joi.string().required().label("Product ID"),
 });

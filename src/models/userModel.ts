@@ -691,7 +691,10 @@ export const getUserDataService = async (userId: string): Promise<User> => {
 
     // replace profilepicture path by imagePath.replace(/\\/g, "/")
 
-    result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`;
+    if (result.rows[0].profilepicture) {
+      result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`;
+    }
+
     if (
       result.rows[0].auth_provider !== "local" &&
       result.rows[0].profilepicture

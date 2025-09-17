@@ -282,3 +282,24 @@ export interface UserAppNotification {
   user_id: string;
   status: string;
 }
+
+// product
+export interface Product {
+  name: string;
+  description: string;
+  type: string;
+  price: number;
+}
+
+// user cart
+export interface UserCart {
+  user_id: string;
+  product_id: string;
+  quantity: number;
+}
+
+// user purchases history
+export interface UserPurchasesHistory {
+  user_id: string;
+  product_id: string;
+}
