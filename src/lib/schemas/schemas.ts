@@ -318,10 +318,7 @@ export const createAdvertSchema = Joi.object({
     .required()
     .label("Advert Location"),
   language: Joi.string().required().label("Language"),
-  advert_placement: Joi.string()
-    .valid("general", "notification", "both")
-    .required()
-    .label("Advert Placement"),
+  advert_placement: Joi.string().required().label("Advert Placement"),
   platform: Joi.array()
     .items(Joi.string().valid("web", "ios", "android", "all"))
     .min(1)
@@ -355,29 +352,33 @@ export const updateAdvertSchema = Joi.object({
   second_call_to_action_link: Joi.string()
     .required()
     .label("Second Call to Action Link"),
-  saved_campaign: Joi.string().required().label("Saved Campaign"),
   campaign_name: Joi.string().required().label("Campaign Name"),
   title: Joi.string().required().label("Title"),
   description: Joi.string().required().label("Description"),
   audience_min_age: Joi.number().min(0).required().label("Audience Min Age"),
   audience_max_age: Joi.number().min(0).required().label("Audience Max Age"),
-  gender: Joi.string()
-    .valid("male", "female", "Non-binary")
+  gender: Joi.array()
+    .items(Joi.string().valid("male", "female", "Non-binary"))
     .required()
     .label("Gender"),
   region: Joi.string().required().label("Region"),
-  advert_location: Joi.string().required().label("Advert Location"),
-  language: Joi.string().required().label("Language"),
-  advert_placement: Joi.string()
-    .valid("general", "notification", "both")
+  advert_location: Joi.array()
+    .items(Joi.string())
+    .min(1)
+    .max(3)
     .required()
-    .label("Advert Placement"),
-  platform: Joi.string()
-    .valid("web", "ios", "android", "all")
+    .label("Advert Location"),
+  language: Joi.string().required().label("Language"),
+  advert_placement: Joi.string().required().label("Advert Placement"),
+  platform: Joi.array()
+    .items(Joi.string().valid("web", "ios", "android", "all"))
+    .min(1)
     .required()
     .label("Platform"),
+  daily_budget_type: Joi.string().required().label("Daily Budget Type"),
   daily_budget: Joi.number().min(0).required().label("Daily Budget"),
   advert_duration: Joi.number().min(0).required().label("Advert Duration"),
+  save_template: Joi.boolean().required().label("Save as Template"),
 });
 
 // create notification schema
@@ -418,4 +419,12 @@ export const createUserCartSchema = Joi.object({
 export const createUserPurchaseHistorySchema = Joi.object({
   user_id: Joi.string().required().label("User ID"),
   product_id: Joi.string().required().label("Product ID"),
+});
+
+// crete edit advert placement table schema
+export const createEditAdvertPlacementTableSchema = Joi.object({
+  name: Joi.string().required().label("Name"),
+  price: Joi.number().precision(2).required().label("Price"),
+  description: Joi.string().optional().label("Description"),
+  is_active: Joi.boolean().required().label("Is Active"),
 });

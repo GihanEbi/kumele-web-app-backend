@@ -106,12 +106,13 @@ export const getSavedAdvertsByUserIdService = async (
   }
 
   try {
+    // get all advert id and title where user_id is userId and save_template is true
     const result = await pool.query(
-      "SELECT id, title FROM adverts WHERE user_id = $1",
+      "SELECT id, campaign_name FROM adverts WHERE user_id = $1 AND save_template = true",
       [userId]
     );
     return result.rows.map((row) => ({
-      label: row.title,
+      label: row.campaign_name,
       value: row.id,
     }));
   } catch (error) {
@@ -697,5 +698,137 @@ export const updateAdvertCallToActionByIdService = async (
   } catch (error) {
     console.error("Error updating advert call to action by ID:", error);
     throw new Error("Error updating advert call to action by ID");
+  }
+};
+
+// ====== advert placement price functions ======
+// create advert placement price function
+export const createAdvertPlacementPriceService = async (priceData: {
+  name: string;
+  price: number;
+  description?: string;
+}): Promise<{
+  id: string;
+  name: string;
+  price: number;
+  description?: string;
+  is_active: boolean;
+  created_at: Date;
+}> => {
+  // check if priceData is provided
+  if (!priceData || !priceData.name || !priceData.price) {
+    return Promise.reject(new Error("Advert placement price data is required"));
+  }
+
+  try {
+    // create unique id for advert placement price
+    const id = await createId(id_codes.idCode.advertPlacementPrice);
+    // insert the advert placement price data into the database
+    const result = await pool.query(
+      "INSERT INTO advert_placement_prices (id, name, price, description) VALUES ($1, $2, $3, $4) RETURNING *",
+      [id, priceData.name, priceData.price, priceData.description]
+    );
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error creating advert placement price:", error);
+    throw new Error("Error creating advert placement price");
+  }
+};
+
+// get all advert placement prices function
+export const getAllAdvertPlacementPricesService = async (): Promise<
+  { label: string; value: string }[]
+> => {
+  try {
+    const result = await pool.query("SELECT * FROM advert_placement_prices");
+    // reshape result with label and value with only is_active true
+    return result.rows
+      .filter((row) => row.is_active)
+      .map((row) => ({
+        label: row.name,
+        value: row.id,
+      }));
+  } catch (error) {
+    console.error("Error retrieving all advert placement prices:", error);
+    throw new Error("Error retrieving all advert placement prices");
+  }
+};
+
+// get advert placement by id function
+export const getAdvertPlacementPriceByIdService = async (
+  priceId: string
+): Promise<{
+  id: string;
+  name: string;
+  price: number;
+  description?: string;
+  is_active: boolean;
+  created_at: Date;
+} | null> => {
+  // check if priceId is provided
+  if (!priceId) {
+    return Promise.reject(new Error("Advert placement price ID is required"));
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT * FROM advert_placement_prices WHERE id = $1",
+      [priceId]
+    );
+    if (result.rows.length === 0) {
+      return Promise.reject(new Error("Advert placement price not found"));
+    }
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error retrieving advert placement price by ID:", error);
+    throw new Error("Error retrieving advert placement price by ID");
+  }
+};
+
+// update advert placement price by id function
+export const updateAdvertPlacementPriceByIdService = async (
+  priceId: string,
+  priceData: Partial<{
+    name: string;
+    price: number;
+    description?: string;
+    is_active: boolean;
+  }>
+): Promise<{
+  id: string;
+  name: string;
+  price: number;
+  description?: string;
+  is_active: boolean;
+  created_at: Date;
+} | null> => {
+  // check if priceId is provided
+  if (!priceId) {
+    return Promise.reject(new Error("Advert placement price ID is required"));
+  }
+
+  // check if priceData is provided
+  if (!priceData) {
+    return Promise.reject(new Error("Advert placement price data is required"));
+  }
+
+  try {
+    const result = await pool.query(
+      "UPDATE advert_placement_prices SET name = $1, price = $2, description = $3, is_active = $4 WHERE id = $5 RETURNING *",
+      [
+        priceData.name,
+        priceData.price,
+        priceData.description,
+        priceData.is_active,
+        priceId,
+      ]
+    );
+    if (result.rows.length === 0) {
+      return Promise.reject(new Error("Advert placement price not found"));
+    }
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error updating advert placement price by ID:", error);
+    throw new Error("Error updating advert placement price by ID");
   }
 };

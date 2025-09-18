@@ -331,9 +331,7 @@ export const createBlogCommentService = async (
 };
 
 // get blog comments
-export const getBlogCommentsService = async (
-  blogId: string
-): Promise<BlogComment[]> => {
+export const getBlogCommentsService = async (blogId: string) => {
   // check if blogId is provided
   if (!blogId) {
     return Promise.reject(new Error("Blog ID is required"));
@@ -359,44 +357,135 @@ export const getBlogCommentsService = async (
     }));
 
     // check on every comment and find the reply_to for each and every comment and make a array using it
-    const replyComments = commentsWithUsernames.filter(
-      (comment) => comment.reply_to
-    );
+    // const replyComments = commentsWithUsernames.filter(
+    //   (comment) => comment.reply_to
+    // );
 
-    // make an array with child comments
-    const childComments = replyComments.map((comment) => {
-      const parentComment = commentsWithUsernames.find(
-        (c) => c.id === comment.reply_to
-      );
-      return {
-        ...comment,
-        parent_comment_username:
-          userMap.get(parentComment.user_id) || "Unknown",
-      };
-    });
+    // // make an array with child comments
+    // const childComments = replyComments.map((comment) => {
+    //   const parentComment = commentsWithUsernames.find(
+    //     (c) => c.id === comment.reply_to
+    //   );
+    //   return {
+    //     ...comment,
+    //     parent_comment_username:
+    //       userMap.get(parentComment.user_id) || "Unknown",
+    //   };
+    // });
 
-    // map all child comments to their parent comment
-    const commentsWithParents = commentsWithUsernames.map((comment) => {
-      const child = childComments.find((c) => c.reply_to === comment.id);
-      return {
-        ...comment,
-        child_comments: child ? [child] : [],
-      };
-    });
-    // check if child comment also have child comment add that as well
-    commentsWithParents.forEach((comment) => {
-      comment.child_comments.forEach((child: any) => {
-        const grandChild = childComments.find((c) => c.reply_to === child.id);
-        if (grandChild) {
-          child.child_comments = child.child_comments || [];
-          child.child_comments.push(grandChild);
-        }
-      });
-    });
+    // // map all child comments to their parent comment
+    // const commentsWithParents = commentsWithUsernames.map((comment) => {
+    //   const child = childComments.find((c) => c.reply_to === comment.id);
+    //   return {
+    //     ...comment,
+    //     child_comments: child ? [child] : [],
+    //   };
+    // });
+    // // check if child comment also have child comment add that as well
+    // commentsWithParents.forEach((comment) => {
+    //   comment.child_comments.forEach((child: any) => {
+    //     const grandChild = childComments.find((c) => c.reply_to === child.id);
+    //     if (grandChild) {
+    //       child.child_comments = child.child_comments || [];
+    //       child.child_comments.push(grandChild);
+    //     }
+    //   });
+    // });
 
-    return commentsWithParents;
+    const rawData = commentsWithUsernames;
+    const fullTree = buildCommentTree(rawData, "US00001");
+    const limitedTree = limitCommentDepth(fullTree, 2);
+
+    return commentsWithUsernames;
   } catch (error) {
     console.error("Error retrieving blog comments:", error);
     throw new Error("Error retrieving blog comments");
   }
 };
+type RawComment = {
+  id: string;
+  reply_to: string;
+  blog_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  username: string;
+};
+
+type Comment = {
+  id: string;
+  author: string;
+  date: string;
+  content: string;
+  avatarUrl: string;
+  isOwner: boolean;
+  replies: Comment[];
+};
+
+// Format date
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+// Step 1: Build full tree from flat array
+function buildCommentTree(raw: RawComment[], currentUserId: string): Comment[] {
+  const map = new Map<string, Comment>();
+
+  raw.forEach((c) => {
+    map.set(c.id, {
+      id: c.id,
+      author: c.username,
+      date: formatDate(c.created_at),
+      content: c.content,
+      avatarUrl: "/avatar-img/user-preview.png",
+      isOwner: c.user_id === currentUserId,
+      replies: [],
+    });
+  });
+
+  const tree: Comment[] = [];
+  raw.forEach((c) => {
+    if (c.reply_to) {
+      const parent = map.get(c.reply_to);
+      if (parent) {
+        parent.replies.push(map.get(c.id)!);
+      }
+    } else {
+      tree.push(map.get(c.id)!);
+    }
+  });
+
+  return tree;
+}
+
+// Step 2: Limit depth
+function limitCommentDepth(
+  comments: Comment[],
+  maxDepth: number = 2
+): Comment[] {
+  function process(list: Comment[], depth: number): Comment[] {
+    return list.map((comment) => {
+      if (depth >= maxDepth) {
+        // flatten deeper replies into this level
+        return {
+          ...comment,
+          replies: comment.replies.flatMap((c) => [
+            { ...c, replies: [] }, // cut off deeper nesting
+            ...process(c.replies, depth), // pull grandchildren up here
+          ]),
+        };
+      }
+      return {
+        ...comment,
+        replies: process(comment.replies, depth + 1),
+      };
+    });
+  }
+
+  return process(comments, 1);
+}

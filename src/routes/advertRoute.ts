@@ -29,6 +29,10 @@ import {
   getAdvertCallToActionById,
   updateAdvertCallToActionById,
   getSavedAdvertsByUserId,
+  createAdvertPlacementPrice,
+  getAllAdvertPlacementPrices,
+  getAdvertPlacementPriceById,
+  updateAdvertPlacementPriceById,
 } from "../controllers/advertController";
 
 const advertRoute = Router();
@@ -53,7 +57,7 @@ advertRoute.get(
   getAdvertsByCategoryId
 );
 advertRoute.get(
-  "/get-adverts-by-user-id/:userId",
+  "/get-adverts-by-user-id",
   tokenAuthHandler,
   getAdvertsByUserId
 );
@@ -146,5 +150,28 @@ advertRoute.put(
   tokenAuthHandler,
   updateAdvertCallToActionById
 );
+
+// Advert Placement Price Routes
+advertRoute.post(
+  "/create-advert-placement-price",
+  tokenAuthHandler,
+  createAdvertPlacementPrice
+);
+advertRoute.get(
+  "/get-all-advert-placement-prices",
+  tokenAuthHandler,
+  getAllAdvertPlacementPrices
+);
+advertRoute.get(
+  "/get-advert-placement-price-by-id/:id",
+  tokenAuthHandler,
+  getAdvertPlacementPriceById
+);
+advertRoute.put(
+  "/update-advert-placement-price-by-id/:id",
+  tokenAuthHandler,
+  updateAdvertPlacementPriceById
+);
+
 
 export default advertRoute;

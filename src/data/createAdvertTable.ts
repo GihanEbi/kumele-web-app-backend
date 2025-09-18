@@ -25,7 +25,7 @@ const createAdvertTable = async () => {
         region VARCHAR(100) NOT NULL REFERENCES advert_region(id),
         advert_location TEXT[] NOT NULL,
         language VARCHAR(100) NOT NULL REFERENCES advert_languages(id),
-        advert_placement VARCHAR(100) NOT NULL CHECK (advert_placement IN ('general', 'notification', 'both')),
+        advert_placement VARCHAR(100) NOT NULL REFERENCES advert_placement_prices(id),
         platform TEXT[] NOT NULL CHECK (platform <@ ARRAY['web', 'ios', 'android', 'all']),
         daily_budget_type VARCHAR(10) NOT NULL REFERENCES advert_daily_budget(id),
         daily_budget DECIMAL(10, 2) NOT NULL,

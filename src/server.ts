@@ -66,6 +66,7 @@ import userCartRoute from "./routes/userCartRoute";
 import createUserCartTable from "./data/createUserCartTable";
 import purchaseHistoryRoute from "./routes/purchaseHistoryRoutes";
 import createUserParchesHistoryTable from "./data/createUserParchesHistoryTable";
+import createAdvertPlacementPriceTable from "./data/createAdvertPlacementPriceTable";
 
 const PORT = process.env.PORT || 5001; // Your defined port
 
@@ -188,6 +189,7 @@ createNotificationTable();
 createProductTable();
 createUserCartTable();
 createUserParchesHistoryTable();
+createAdvertPlacementPriceTable()
 
 // CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
 server.listen(PORT, () => {

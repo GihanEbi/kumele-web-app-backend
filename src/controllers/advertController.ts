@@ -3,18 +3,21 @@ import {
   createAdvertCallToActionService,
   createAdvertDailyBudgetService,
   createAdvertLanguageService,
+  createAdvertPlacementPriceService,
   createAdvertRegionService,
   createAdvertService,
   getAdvertByIdService,
   getAdvertCallToActionByIdService,
   getAdvertDailyBudgetByIdService,
   getAdvertLanguageByIdService,
+  getAdvertPlacementPriceByIdService,
   getAdvertRegionByIdService,
   getAdvertsByCategoryIdService,
   getAdvertsByUserIdService,
   getAllAdvertCallToActionsService,
   getAllAdvertDailyBudgetsService,
   getAllAdvertLanguagesService,
+  getAllAdvertPlacementPricesService,
   getAllAdvertRegionsService,
   getAllAdvertsService,
   getSavedAdvertsByUserIdService,
@@ -22,6 +25,7 @@ import {
   updateAdvertCallToActionByIdService,
   updateAdvertDailyBudgetByIdService,
   updateAdvertLanguageByIdService,
+  updateAdvertPlacementPriceByIdService,
   updateAdvertRegionByIdService,
 } from "../models/advertModel";
 import fs from "fs";
@@ -70,12 +74,14 @@ export const createAdvert = async (
 
   try {
     const newAdvert = await createAdvertService({ user_id, advertData });
-    res
-      .status(201)
-      .json({ message: "Advert created successfully.", advert: newAdvert });
+    res.status(201).json({
+      success: true,
+      message: "Advert created successfully.",
+      advert: newAdvert,
+    });
   } catch (err: any) {
     console.log(err);
-    
+
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
@@ -137,7 +143,7 @@ export const getAdvertsByUserId = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.UserID;
     const adverts = await getAdvertsByUserIdService(userId);
     res.status(200).json({
       success: true,
@@ -611,6 +617,108 @@ export const updateAdvertCallToActionById = async (
     res.status(statusCode).json({
       success: false,
       message: err.message || "Error updating advert call to action",
+    });
+    next(err);
+  }
+};
+
+// ============= advert placement price functions ==================
+// create advert placement price
+export const createAdvertPlacementPrice = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const placementPriceData = req.body;
+  try {
+    const newPlacementPrice = await createAdvertPlacementPriceService(
+      placementPriceData
+    );
+    res.status(201).json({
+      success: true,
+      message: "Advert placement price created successfully.",
+      data: newPlacementPrice,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Error creating advert placement price",
+    });
+    next(err);
+  }
+};
+
+// get all advert placement prices
+export const getAllAdvertPlacementPrices = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const placementPrices = await getAllAdvertPlacementPricesService();
+    res.status(200).json({
+      success: true,
+      data: placementPrices,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Error retrieving advert placement prices",
+    });
+    next(err);
+  }
+};
+
+// get advert placement price by id
+export const getAdvertPlacementPriceById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const placementPriceId = req.params.id;
+  try {
+    const placementPrice = await getAdvertPlacementPriceByIdService(
+      placementPriceId
+    );
+    res.status(200).json({
+      success: true,
+      data: placementPrice,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Error retrieving advert placement price",
+    });
+    next(err);
+  }
+};
+
+// update advert placement price by id
+export const updateAdvertPlacementPriceById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const placementPriceId = req.params.id;
+  const updatedData = req.body;
+
+  try {
+    const updatedPlacementPrice = await updateAdvertPlacementPriceByIdService(
+      placementPriceId,
+      updatedData
+    );
+    res.status(200).json({
+      success: true,
+      data: updatedPlacementPrice,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Error updating advert placement price",
     });
     next(err);
   }
