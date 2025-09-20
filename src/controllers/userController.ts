@@ -20,6 +20,7 @@ import {
   sendPasswordResetEmailService,
   resetPasswordService,
   completeGoogleSignupService,
+  getUserByIdService,
 } from "../models/userModel";
 import { pool } from "../config/db";
 import fs from "fs";
@@ -654,6 +655,31 @@ export const getUserEventCategories = async (
     res.status(statusCode).json({
       success: false,
       message: err.message || "Failed to retrieve user hobbies.",
+    });
+    next(err);
+  }
+};
+
+// get user data by user id
+export const getUserDataByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.params.userId;
+
+    const userData = await getUserByIdService(userId);
+
+    res.status(200).json({
+      success: true,
+      data: userData,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to retrieve user data.",
     });
     next(err);
   }

@@ -5,6 +5,8 @@ import { createId } from "../service/idGenerator/idGenerator";
 import { validation } from "../service/schemaValidetionService/schemaValidetionService";
 import { EventCategory } from "../types/types";
 
+const baseUrl = process.env.BASE_URL ?? "";
+
 export const createEventService = async (
   eventData: EventCategory
 ): Promise<EventCategory> => {
@@ -156,9 +158,28 @@ export const getEventByIdService = async (
   }
 
   try {
-    const result = await pool.query(`SELECT * FROM events WHERE id = $1`, [
-      eventId,
-    ]);
+    const result = await pool.query(
+  `
+  SELECT 
+    e.*, 
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', u.id,
+          'username', u.username,
+          'profilePicture', $2 || replace(u."profilepicture", '\\', '/')
+        )
+      )
+      FROM user_event ue
+      JOIN users u ON ue.user_id = u.id
+      WHERE ue.event_id = e.id AND ue.status = 'CONFIRMED'
+    ) AS participants
+  FROM events e
+  WHERE e.id = $1
+  `,
+  [eventId, baseUrl.endsWith('/') ? baseUrl : baseUrl + '/']
+);
+
     if (result.rows.length === 0) {
       return Promise.reject(new Error("Event not found"));
     }

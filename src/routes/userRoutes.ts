@@ -5,6 +5,7 @@ import {
   createOrUpdateUserNotifications,
   deleteUserAccount,
   getUserData,
+  getUserDataByUserId,
   getUserEventCategories,
   getUserNotificationStatus,
   googleSignIn,
@@ -82,5 +83,6 @@ userRoutes.get(
   tokenAuthHandler,
   getUserEventCategories
 );
+userRoutes.get("/get-user-by-id/:userId", tokenAuthHandler, getUserDataByUserId);
 
 export default userRoutes;

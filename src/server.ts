@@ -67,6 +67,14 @@ import createUserCartTable from "./data/createUserCartTable";
 import purchaseHistoryRoute from "./routes/purchaseHistoryRoutes";
 import createUserParchesHistoryTable from "./data/createUserParchesHistoryTable";
 import createAdvertPlacementPriceTable from "./data/createAdvertPlacementPriceTable";
+import userEventRoutes from "./routes/userEventRoute";
+import createUserEventTable from "./data/createUserEventTable";
+import eventHostRatingRoutes from "./routes/eventHostRatingRoutes";
+import createEventHostRatingTable from "./data/createEventHostRatingTable";
+import eventReportRouter from "./routes/eventReportRoute";
+import createEventReportTable from "./data/createEventReportTable";
+import followingFollowerRouter from "./routes/followingFollowerRoutes";
+import createFollowingFollowerTable from "./data/createFollowingFollowerTable";
 
 const PORT = process.env.PORT || 5001; // Your defined port
 
@@ -149,6 +157,10 @@ app.use("/api/notifications", notificationRoute);
 app.use("/api/products", productRoute);
 app.use("/api/cart", userCartRoute);
 app.use("/api/purchase-history", purchaseHistoryRoute);
+app.use("/api/user-events", userEventRoutes);
+app.use("/api/event-host-ratings", eventHostRatingRoutes);
+app.use("/api/event-reports", eventReportRouter);
+app.use("/api/following-follower", followingFollowerRouter);
 
 // Error handling middleware (place this after all routes)
 app.use(errorHandler); // <-- Move this after all routes
@@ -189,7 +201,11 @@ createNotificationTable();
 createProductTable();
 createUserCartTable();
 createUserParchesHistoryTable();
-createAdvertPlacementPriceTable()
+createAdvertPlacementPriceTable();
+createUserEventTable();
+createEventHostRatingTable();
+createEventReportTable();
+createFollowingFollowerTable();
 
 // CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
 server.listen(PORT, () => {

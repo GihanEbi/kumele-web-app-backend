@@ -207,3 +207,44 @@ export const deactivateUserSubscription = async (
     throw new Error("Error deactivating user subscription");
   }
 };
+
+
+export const getAllUserSubscriptionsAndUnsubscribes = async (
+  userId: string
+): Promise<any[]> => {
+  // check user id is available in user table
+  const userCheck = await pool.query("SELECT * FROM users WHERE id = $1", [
+    userId,
+  ]);
+  if (userCheck.rows.length === 0) {
+    throw new Error("User not found");
+  }
+
+  // get all subscriptions + check if user subscribed
+  const query = `
+    SELECT 
+      sd.id,
+      sd.icon_code,
+      sd.title,
+      sd.description,
+      sd.price,
+      sd.validity_period,
+      sd.created_at,
+      CASE 
+        WHEN us.user_id IS NOT NULL THEN true
+        ELSE false
+      END AS "isActive"
+    FROM subscription_data sd
+    LEFT JOIN user_subscriptions us 
+      ON sd.id = us.subscription_id 
+     AND us.user_id = $1
+  `;
+
+  try {
+    const result = await pool.query(query, [userId]);
+    return result.rows;
+  } catch (error) {
+    console.error("Error getting user subscriptions:", error);
+    throw new Error("Error getting user subscriptions");
+  }
+};

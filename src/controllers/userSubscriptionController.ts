@@ -5,6 +5,7 @@ import {
   getAllUserSubscriptions,
   getUserSubscription,
   deactivateUserSubscription,
+  getAllUserSubscriptionsAndUnsubscribes,
 } from "../models/userSubscriptionModel";
 
 export const createUserSubscriptionController = async (
@@ -23,12 +24,10 @@ export const createUserSubscriptionController = async (
       subscription: subscription,
     });
   } catch (err: any) {
-    console.log(err);
-    
-    res.status(500).json({
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "User Subscription creation failed",
-      error: err.message || err,
+      message: err.message || "Failed to create user subscription.",
     });
     next(err);
   }
@@ -47,11 +46,11 @@ export const getAllUserSubscriptionsController = async (
       success: true,
       subscriptions: subscriptions,
     });
-  } catch (err : any) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to retrieve subscriptions",
-      error: err,
+      message: err.message || "Failed to retrieve user subscriptions.",
     });
     next(err);
   }
@@ -72,18 +71,15 @@ export const activateUserSubscriptionController = async (
       message: "Subscription activated successfully!",
       subscription: subscription,
     });
-  } catch (err) {
-    console.log(err);
-    
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to activate subscription",
-      error: err,
+      message: err.message || "Failed to activate subscription.",
     });
     next(err);
   }
 };
-
 
 // deactivate subscriptions controller
 export const deactivateUserSubscriptionController = async (
@@ -94,17 +90,42 @@ export const deactivateUserSubscriptionController = async (
   try {
     const userId = req.UserID;
     const subscriptionId = req.params.subscriptionId;
-    const subscription = await deactivateUserSubscription(userId, subscriptionId);
+    const subscription = await deactivateUserSubscription(
+      userId,
+      subscriptionId
+    );
     return res.status(200).json({
       success: true,
       message: "Subscription deactivated successfully!",
       subscription: subscription,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to deactivate subscription",
-      error: err,
+      message: err.message || "Failed to deactivate subscription.",
+    });
+    next(err);
+  }
+};
+//  getAllUserSubscriptionsAndUnsubscribes
+export const getAllUserSubscriptionsAndUnsubscribesController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+    const subscriptions = await getAllUserSubscriptionsAndUnsubscribes(userId);
+    return res.status(200).json({
+      success: true,
+      subscriptions: subscriptions,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to retrieve user subscriptions.",
     });
     next(err);
   }

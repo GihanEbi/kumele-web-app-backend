@@ -1010,3 +1010,28 @@ export const getUserEventCategoriesService = async (
     throw error;
   }
 };
+
+// get user data by user id
+export const getUserByIdService = async (userId: string): Promise<User> => {
+  try {
+    const result = await pool.query("SELECT * FROM users WHERE ID = $1", [
+      userId,
+    ]);
+    if (result.rows.length === 0) {
+      const error = new Error(`User not found: ${userId}`);
+      (error as any).statusCode = 404;
+      throw error;
+    }
+    // remove user password field in result
+    result.rows[0].password = undefined;
+    // set profilepicture full path with replace(/\\/g, "/")  if exists
+    if (result.rows[0].profilepicture) {
+      result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`.replace(/\\/g, "/");
+    }
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error in getUserByIdService model:", error);
+    throw error;
+  }
+};

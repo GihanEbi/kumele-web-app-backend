@@ -11,6 +11,7 @@ import {
   activateUserSubscriptionController,
   createUserSubscriptionController,
   deactivateUserSubscriptionController,
+  getAllUserSubscriptionsAndUnsubscribesController,
   getAllUserSubscriptionsController,
 } from "../controllers/userSubscriptionController";
 
@@ -65,6 +66,13 @@ subscriptionDataRouter.post(
   "/deactivate-user-subscription/:subscriptionId",
   tokenAuthHandler,
   deactivateUserSubscriptionController
+);
+
+// getAllUserSubscriptionsAndUnsubscribes
+subscriptionDataRouter.get(
+  "/get-all-user-subscriptions-and-unsubscribes",
+  tokenAuthHandler,
+  getAllUserSubscriptionsAndUnsubscribesController
 );
 
 export default subscriptionDataRouter;

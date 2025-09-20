@@ -5,6 +5,7 @@ export class id_codes {
     customerSupport: "CS",
     landingPageDetails: "LPD",
     event: "EV",
+    userEvent: "UEV",
     blog: "BL",
     blogComment: "BLC",
     subscription: "SUB",
@@ -20,5 +21,7 @@ export class id_codes {
     product: "PR",
     userCart: "UC",
     userPurchasesHistory: "UPH",
+    eventHostRating: "EHR",
+    eventReport: "ER",
   };
 }
