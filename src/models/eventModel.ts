@@ -159,26 +159,69 @@ export const getEventByIdService = async (
 
   try {
     const result = await pool.query(
-  `
+      `
   SELECT 
-    e.*, 
+    e.id,
+    e.category_id,
+    e.event_name,
+    e.subtitle,
+    e.description,
+    e.event_start_in,
+    e.event_date,
+    e.event_start_time,
+    e.event_end_time,
+    e.street_address,
+    e.home_number,
+    e.district,
+    e.postal_zip_code,
+    e.state,
+    e.age_range_min,
+    e.age_range_max,
+    e.max_guests,
+    e.payment_type,
+    e.price,
+    e.created_at,
+    ($2 || REPLACE(e.event_image_url, '\\', '/')) AS event_image_url,
+
+    -- host details with following count + average rating
+    jsonb_build_object(
+      'id', u.id,
+      'username', u.username,
+      'fullName', u.fullName,
+      'about_me', u.about_me,
+      'profilePicture', $2 || REPLACE(u."profilepicture", '\\', '/'),
+      'following_count', (
+        SELECT COUNT(*) 
+        FROM following_follower ff 
+        WHERE ff.following_id = u.id
+      ),
+      'host_rating', (
+        SELECT COALESCE(ROUND(AVG(ehr.host_rating)::numeric, 1), 0)
+        FROM event_host_ratings ehr
+        WHERE ehr.host_id = u.id
+      )
+    ) AS host_details,
+
+    -- participants
     (
       SELECT jsonb_agg(
         jsonb_build_object(
-          'id', u.id,
-          'username', u.username,
-          'profilePicture', $2 || replace(u."profilepicture", '\\', '/')
+          'id', uu.id,
+          'username', uu.username,
+          'profilePicture', $2 || REPLACE(uu."profilepicture", '\\', '/')
         )
       )
       FROM user_event ue
-      JOIN users u ON ue.user_id = u.id
+      JOIN users uu ON ue.user_id = uu.id
       WHERE ue.event_id = e.id AND ue.status = 'CONFIRMED'
     ) AS participants
+
   FROM events e
+  JOIN users u ON e.user_id = u.id
   WHERE e.id = $1
   `,
-  [eventId, baseUrl.endsWith('/') ? baseUrl : baseUrl + '/']
-);
+      [eventId, baseUrl.endsWith("/") ? baseUrl : baseUrl + "/"]
+    );
 
     if (result.rows.length === 0) {
       return Promise.reject(new Error("Event not found"));

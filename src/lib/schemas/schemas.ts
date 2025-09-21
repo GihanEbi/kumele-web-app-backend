@@ -384,17 +384,16 @@ export const updateAdvertSchema = Joi.object({
 // create notification schema
 export const createNotificationSchema = Joi.object({
   title: Joi.string().required().label("Title"),
-  event_category_id: Joi.string().required().label("Event Category ID"),
+  event_id: Joi.string().required().label("Event ID"),
   message: Joi.string().required().label("Message"),
   type: Joi.string().required().label("Type"),
-  created_by: Joi.string().required().label("Created By"),
 });
 
 // create user app notification schema
 export const createUserAppNotificationSchema = Joi.object({
   notification_id: Joi.string().required().label("Notification ID"),
   user_id: Joi.string().required().label("User ID"),
-  status: Joi.string().valid("read", "unread").required().label("Status"),
+  status: Joi.string().required().label("Status"),
 });
 
 // create product schema

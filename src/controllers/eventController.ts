@@ -12,6 +12,8 @@ import {
   createNotification,
   createUserAppNotification,
 } from "../models/notificationModel";
+import { NotificationConstants } from "../constants/notificationConstants";
+import { getFollowersService } from "../models/followingFollowerModel";
 
 export const createEvent = async (
   req: Request,
@@ -37,20 +39,42 @@ export const createEvent = async (
     // notification logic can be added here
     const notificationData = {
       title: newEvent.event_name,
-      message: `A new event has been created. Your event under review.`,
-      type: "event_creation",
-      event_category_id: newEvent.category_id,
-      created_by: user_id,
+      message: `A new event has been created.`,
+      type: NotificationConstants.notificationTypes.createHobbies,
+      event_id: newEvent.id,
     };
     const notifications = await createNotification(notificationData);
+
+    // notification for followers of the user who created the event
+    const followerNotificationData = {
+      title: newEvent.event_name,
+      message: `You are following this event host. Be the first to join.`,
+      type: NotificationConstants.notificationTypes.otherNotifications,
+      event_id: newEvent.id,
+    };
+    const followerNotifications = await createNotification(followerNotificationData);
 
     // user app notification logic can be added here
     const userAppNotificationData = {
       user_id: user_id,
       notification_id: notifications.id,
-      status: "unread",
+      status: NotificationConstants.userNotificationStatus.unread,
     };
     await createUserAppNotification(userAppNotificationData);
+
+    // get the followers list of the user_id
+    const followersList = await getFollowersService(user_id);
+    
+    if (followersList && followersList.followers.length > 0) {
+      for (const follower of followersList.followers) {
+        const followerUserAppNotificationData = {
+          user_id: follower.id,
+          notification_id: followerNotifications.id,
+          status: NotificationConstants.userNotificationStatus.unread,
+        };
+        await createUserAppNotification(followerUserAppNotificationData);
+      }
+    }
 
     res.status(201).json({
       success: true,
