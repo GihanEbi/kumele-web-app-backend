@@ -19,7 +19,7 @@ userEventRoutes.post(
 );
 
 userEventRoutes.put(
-  "/accept-user-event/:id",
+  "/accept-user-event/:userEventId",
   tokenAuthHandler,
   acceptUserEventController
 );

@@ -41,7 +41,7 @@ export const acceptUserEventController = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userEventId = req.params.id;
+  const userEventId = req.params.userEventId;
   try {
     const result = await acceptUserEventService(userEventId);
     res.status(200).json({
@@ -90,8 +90,9 @@ export const getAllUserEventsByEventIdController = async (
   next: NextFunction
 ) => {
   const eventId = req.params.eventId;
+  const user_id = req.UserID;
   try {
-    const result = await getAllUserEventsByEventIdService(eventId);
+    const result = await getAllUserEventsByEventIdService(eventId, user_id);
     res.status(200).json({
       success: true,
       message: "User events retrieved successfully",

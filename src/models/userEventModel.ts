@@ -234,10 +234,16 @@ export const getCancelledUserEventsByUserIdService = async (userId: string) => {
 };
 
 // function to get all user events by event id
-export const getAllUserEventsByEventIdService = async (eventId: string) => {
+export const getAllUserEventsByEventIdService = async (
+  eventId: string,
+  userId: string
+) => {
   // check if eventId is provided
   if (!eventId) {
     return Promise.reject(new Error("Event ID is required"));
+  }
+  if (!userId) {
+    return Promise.reject(new Error("User ID is required"));
   }
   // check if the event is in events table
   const eventCheck = await pool.query(`SELECT * FROM events WHERE id = $1`, [
@@ -247,19 +253,16 @@ export const getAllUserEventsByEventIdService = async (eventId: string) => {
     return Promise.reject(new Error("Event not found"));
   }
   try {
-    // get all user events and get event data using event_id of the data. set it as a separate object call event details
+    // get the data that match to user id and event id
     const result = await pool.query(
       `
-  SELECT 
-    to_jsonb(ue) AS user_event,
-    to_jsonb(e)  AS event
-  FROM user_event ue
-  JOIN events e ON ue.event_id = e.id
-  WHERE ue.event_id = $1
-  `,
-      [eventId]
+    SELECT * FROM user_event
+    WHERE event_id = $1 AND user_id = $2
+    `,
+      [eventId, userId]
     );
-    return result.rows;
+
+    return result.rows[0];
   } catch (error) {
     console.error("Error getting all user events by event ID:", error);
     throw new Error("Error getting all user events by event ID");
