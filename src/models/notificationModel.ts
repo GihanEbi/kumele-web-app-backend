@@ -151,28 +151,6 @@ export const getAllUnreadNotificationsCountByUserId = async (
   }
 };
 
-// get match hobbies notifications by user id
-export const getMatchHobbiesNotificationsByUserId = async (userId: string) => {
-  try {
-    const result = await pool.query(
-      `
-      SELECT * FROM user_app_notification uan
-      JOIN notification n ON uan.notification_id = n.id
-      WHERE uan.user_id = $1
-        AND n.type = 'MATCH_HOBBIES'
-    `,
-      [userId]
-    );
-    return result.rows;
-  } catch (error) {
-    console.error(
-      "Error getting match hobbies notifications by user id:",
-      error
-    );
-    throw error;
-  }
-};
-
 // get create hobbies notifications by user id
 export const getCreateHobbiesNotificationsByUserId = async (userId: string) => {
   try {
@@ -228,6 +206,128 @@ export const getCreateHobbiesNotificationsByUserId = async (userId: string) => {
   } catch (error) {
     console.error(
       "Error getting create hobbies notifications by user id:",
+      error
+    );
+    throw error;
+  }
+};
+
+// get followers event creation notifications by user id
+export const getFollowersEventCreationNotificationsByUserId = async (userId: string) => {
+  try {
+    const result = await pool.query(
+      `
+      SELECT 
+        uan.*,
+        n.id AS notification_id,
+        n.type,
+        n.title,
+        n.message,
+        n.event_id,
+        n.created_at AS notification_created_at,
+        json_build_object(
+          'id', e.id,
+          'user_id', e.user_id,
+          'category_id', e.category_id,
+          'event_image_url', CONCAT($2::text, REPLACE(e.event_image_url, '\\', '/')),
+          'event_name', e.event_name,
+          'subtitle', e.subtitle,
+          'description', e.description,
+          'event_start_in', e.event_start_in,
+          'event_date', e.event_date,
+          'event_start_time', e.event_start_time,
+          'event_end_time', e.event_end_time,
+          'street_address', e.street_address,
+          'home_number', e.home_number,
+          'district', e.district,
+          'postal_zip_code', e.postal_zip_code,
+          'state', e.state,
+          'age_range_min', e.age_range_min,
+          'age_range_max', e.age_range_max,
+          'max_guests', e.max_guests,
+          'payment_type', e.payment_type,
+          'price', e.price,
+          'created_at', e.created_at,
+          'host', json_build_object(
+              'username', u.username,
+              'profilePicture', CONCAT($2::text, REPLACE(u.profilePicture, '\\', '/'))
+          )
+        ) AS event
+      FROM user_app_notification uan
+      JOIN notification n ON uan.notification_id = n.id
+      LEFT JOIN events e ON n.event_id = e.id
+      LEFT JOIN users u ON e.user_id = u.id
+      WHERE uan.user_id = $1
+        AND n.type = 'FOLLOWERS_EVENT_CREATION'
+      ORDER BY uan.created_at DESC
+      `,
+      [userId, baseUrl.endsWith("/") ? baseUrl : baseUrl + "/"]
+    );
+    return result.rows;
+  }  catch (error) {
+    console.error(
+      "Error getting other notifications by user id:",
+      error
+    );
+    throw error;
+  }
+};
+
+// get match hobbies notifications by user id
+export const getMatchHobbiesNotificationsByUserId = async (userId: string) => {
+   try {
+    const result = await pool.query(
+      `
+      SELECT 
+        uan.*,
+        n.id AS notification_id,
+        n.type,
+        n.title,
+        n.message,
+        n.event_id,
+        n.created_at AS notification_created_at,
+        json_build_object(
+          'id', e.id,
+          'user_id', e.user_id,
+          'category_id', e.category_id,
+          'event_image_url', CONCAT($2::text, REPLACE(e.event_image_url, '\\', '/')),
+          'event_name', e.event_name,
+          'subtitle', e.subtitle,
+          'description', e.description,
+          'event_start_in', e.event_start_in,
+          'event_date', e.event_date,
+          'event_start_time', e.event_start_time,
+          'event_end_time', e.event_end_time,
+          'street_address', e.street_address,
+          'home_number', e.home_number,
+          'district', e.district,
+          'postal_zip_code', e.postal_zip_code,
+          'state', e.state,
+          'age_range_min', e.age_range_min,
+          'age_range_max', e.age_range_max,
+          'max_guests', e.max_guests,
+          'payment_type', e.payment_type,
+          'price', e.price,
+          'created_at', e.created_at,
+          'host', json_build_object(
+              'username', u.username,
+              'profilePicture', CONCAT($2::text, REPLACE(u.profilePicture, '\\', '/'))
+          )
+        ) AS event
+      FROM user_app_notification uan
+      JOIN notification n ON uan.notification_id = n.id
+      LEFT JOIN events e ON n.event_id = e.id
+      LEFT JOIN users u ON e.user_id = u.id
+      WHERE uan.user_id = $1
+        AND n.type = 'MATCH_HOBBIES'
+      ORDER BY uan.created_at DESC
+      `,
+      [userId, baseUrl.endsWith("/") ? baseUrl : baseUrl + "/"]
+    );
+    return result.rows;
+  } catch (error) {
+    console.error(
+      "Error getting match hobbies notifications by user id:",
       error
     );
     throw error;

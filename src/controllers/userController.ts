@@ -684,3 +684,4 @@ export const getUserDataByUserId = async (
     next(err);
   }
 };
+

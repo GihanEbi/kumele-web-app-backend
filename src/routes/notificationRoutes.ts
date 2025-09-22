@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { tokenAuthHandler } from "../middlewares/tokenAuthHandler";
 import { not } from "joi";
-import { fetchAllUnreadNotificationsCountByUserId, fetchMatchHobbiesNotificationsByUserIdController, fetchNotificationsByUserId } from "../controllers/notificationController";
+import {
+  fetchAllUnreadNotificationsCountByUserId,
+  fetchCreatedHobbiesNotificationsByUserIdController,
+  fetchFollowerEventNotificationsByUserIdController,
+  fetchMatchHobbiesNotificationsByUserIdController,
+} from "../controllers/notificationController";
 
 const notificationRoute = Router();
 
@@ -19,6 +24,18 @@ notificationRoute.get(
 
 notificationRoute.get(
   "/get-created-hobbies-notifications",
+  tokenAuthHandler,
+  fetchCreatedHobbiesNotificationsByUserIdController
+);
+
+notificationRoute.get(
+  "/get-follower-event-notifications",
+  tokenAuthHandler,
+  fetchFollowerEventNotificationsByUserIdController
+);
+
+notificationRoute.get(
+  "/get-match-hobbies-notifications",
   tokenAuthHandler,
   fetchMatchHobbiesNotificationsByUserIdController
 );

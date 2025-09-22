@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import {
   getAllUnreadNotificationsCountByUserId,
   getCreateHobbiesNotificationsByUserId,
+  getFollowersEventCreationNotificationsByUserId,
   getMatchHobbiesNotificationsByUserId,
   getNotificationsByUserId,
 } from "../models/notificationModel";
@@ -45,7 +46,7 @@ export const fetchAllUnreadNotificationsCountByUserId = async (
 };
 
 // get created event notifications by user id
-export const fetchMatchHobbiesNotificationsByUserIdController = async (
+export const fetchCreatedHobbiesNotificationsByUserIdController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -63,6 +64,58 @@ export const fetchMatchHobbiesNotificationsByUserIdController = async (
     res.status(statusCode).json({
       success: false,
       message: err.message || "Failed to fetch created hobbies notifications.",
+    });
+    next(err);
+  }
+};
+
+// get follower event notifications by user id
+export const fetchFollowerEventNotificationsByUserIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user_id = req.UserID; // Assuming user ID is stored in req.UserID
+    const notifications = await getFollowersEventCreationNotificationsByUserId(
+      user_id
+    );
+    res.status(200).json({
+      success: true,
+      message: "Followers event creation notifications fetched successfully",
+      data: notifications,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message:
+        err.message ||
+        "Failed to fetch followers event creation notifications.",
+    });
+    next(err);
+  }
+};
+
+// get match hobbies notifications by user id
+export const fetchMatchHobbiesNotificationsByUserIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user_id = req.UserID; // Assuming user ID is stored in req.UserID
+    const notifications = await getMatchHobbiesNotificationsByUserId(user_id);
+    res.status(200).json({
+      success: true,
+      message: "Match hobbies notifications fetched successfully",
+      data: notifications,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to fetch match hobbies notifications.",
     });
     next(err);
   }

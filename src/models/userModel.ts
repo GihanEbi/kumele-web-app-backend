@@ -1026,12 +1026,29 @@ export const getUserByIdService = async (userId: string): Promise<User> => {
     result.rows[0].password = undefined;
     // set profilepicture full path with replace(/\\/g, "/")  if exists
     if (result.rows[0].profilepicture) {
-      result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`.replace(/\\/g, "/");
+      result.rows[0].profilepicture =
+        `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`.replace(
+          /\\/g,
+          "/"
+        );
     }
-    
+
     return result.rows[0];
   } catch (error) {
     console.error("Error in getUserByIdService model:", error);
+    throw error;
+  }
+};
+
+// get all user id data without current user_id
+export const getAllUsersService = async (currentUserId: string) => {
+  try {
+    const result = await pool.query("SELECT * FROM users WHERE ID != $1", [
+      currentUserId,
+    ]);
+    return result.rows;
+  } catch (error) {
+    console.error("Error in getAllUsersService model:", error);
     throw error;
   }
 };
