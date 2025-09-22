@@ -208,6 +208,12 @@ createEventReportTable();
 createFollowingFollowerTable();
 
 // CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT} with Socket.io`);
+// server.listen(PORT, () => {
+//   console.log(`🚀 Server running on http://localhost:${PORT} with Socket.io`);
+// });
+
+server.listen({ port: PORT, host: '0.0.0.0' }, () => {
+  console.log(`🚀 Server running on http://0.0.0.0:${PORT} with Socket.io`);
 });
+
+
