@@ -125,7 +125,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://109.199.125.163:3000"],
+    origin: ["http://localhost:3000", "http://109.199.125.163:3000", "https://kumele-app.duckdns.org"],
     credentials: true,
   })
 );
