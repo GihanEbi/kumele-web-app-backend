@@ -14,6 +14,7 @@ export interface User {
   my_referral_code: string;
   qr_code_url: string;
   aboutMe: string;
+  beta_code?: string;
 }
 
 // Data needed to find or create a user

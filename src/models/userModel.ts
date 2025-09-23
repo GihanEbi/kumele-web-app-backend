@@ -52,6 +52,24 @@ export const registerUserService = async (userData: User): Promise<User> => {
     throw error;
   }
 
+  // check if the beta code is correct
+  const betaCodeResult = await pool.query(
+    "SELECT * FROM user_beta_codes WHERE email = $1 AND code = $2",
+    [userData.email, userData.beta_code]
+  );
+  if (betaCodeResult.rows.length === 0) {
+    return Promise.reject(`Invalid beta code: ${userData.beta_code}`);
+  }
+  // check if the beta code is already used
+  if (betaCodeResult.rows[0].is_used) {
+    return Promise.reject(`Beta code already used: ${userData.beta_code}`);
+  }
+  // mark the beta code as used
+  await pool.query(
+    "UPDATE user_beta_codes SET is_used = true WHERE email = $1 AND code = $2",
+    [userData.email, userData.beta_code]
+  );
+
   // check if the email already exists
   const existingUser = await pool.query(
     "SELECT * FROM users WHERE email = $1",

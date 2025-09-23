@@ -75,6 +75,7 @@ import eventReportRouter from "./routes/eventReportRoute";
 import createEventReportTable from "./data/createEventReportTable";
 import followingFollowerRouter from "./routes/followingFollowerRoutes";
 import createFollowingFollowerTable from "./data/createFollowingFollowerTable";
+import createUserBetaCodeTable from "./data/createUserBetaCodeTable";
 
 const PORT = process.env.PORT || 5001; // Your defined port
 
@@ -125,7 +126,11 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://109.199.125.163:3000", "https://kumele-app.duckdns.org"],
+    origin: [
+      "http://localhost:3000",
+      "http://109.199.125.163:3000",
+      "https://kumele-app.duckdns.org",
+    ],
     credentials: true,
   })
 );
@@ -206,14 +211,13 @@ createUserEventTable();
 createEventHostRatingTable();
 createEventReportTable();
 createFollowingFollowerTable();
+createUserBetaCodeTable();
 
 // CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
 // server.listen(PORT, () => {
 //   console.log(`🚀 Server running on http://localhost:${PORT} with Socket.io`);
 // });
 
-server.listen({ port: PORT, host: '0.0.0.0' }, () => {
+server.listen({ port: PORT, host: "0.0.0.0" }, () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT} with Socket.io`);
 });
-
-
