@@ -38,7 +38,7 @@ import sgMail from "@sendgrid/mail";
 
 sgMail.setApiKey(systemConfig.emailConfig.apiKey);
 
-const clientURL = process.env.CLIENT_URL || `http://localhost:3000`;
+const clientURL = process.env.CLIENT_URL || "";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -54,7 +54,7 @@ export const registerUserService = async (userData: User): Promise<User> => {
 
   // check if the beta code is correct
   const betaCodeResult = await pool.query(
-    "SELECT * FROM user_beta_codes WHERE email = $1 AND code = $2",
+    "SELECT * FROM user_beta_codes WHERE email = $1 AND beta_code = $2",
     [userData.email, userData.beta_code]
   );
   if (betaCodeResult.rows.length === 0) {
@@ -66,7 +66,7 @@ export const registerUserService = async (userData: User): Promise<User> => {
   }
   // mark the beta code as used
   await pool.query(
-    "UPDATE user_beta_codes SET is_used = true WHERE email = $1 AND code = $2",
+    "UPDATE user_beta_codes SET is_used = true WHERE email = $1 AND beta_code = $2",
     [userData.email, userData.beta_code]
   );
 
@@ -595,7 +595,7 @@ export const setUserNameService = async (
       ]);
     } else if (action === UserConstants.setUserNameAction.SKIP) {
       // make a random readable username based on current time and user id
-      const randomUsername = `user_${Date.now()}_${userId}`;
+      const randomUsername = `${userId}`;
       await pool.query("UPDATE users SET username = $1 WHERE ID = $2", [
         randomUsername,
         userId,

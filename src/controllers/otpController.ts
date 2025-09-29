@@ -12,13 +12,13 @@ export const sendOtpForEmailVerification = async (
     res.status(200).json({
       success: true,
       message: "OTP sent successfully",
-    //   data: otp,
+      //   data: otp,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to send OTP",
-      error: err,
+      message: err.message || "Failed to send OTP.",
     });
     next(err);
   }
@@ -36,13 +36,13 @@ export const verifyOtpForEmail = async (
     res.status(200).json({
       success: true,
       message: "OTP verified successfully",
-    //   data: result,
+      //   data: result,
     });
-  } catch (err) {
-    res.status(400).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "OTP verification failed",
-      error: err,
+      message: err.error || "Failed to verify OTP.",
     });
     next(err);
   }

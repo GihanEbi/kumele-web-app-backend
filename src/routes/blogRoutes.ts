@@ -28,21 +28,19 @@ blogRoute.post(
   createBlog
 );
 
-blogRoute.get("/get-all-blogs", tokenAuthHandler, getAllBlogs);
+blogRoute.get("/get-all-blogs", getAllBlogs);
 
 blogRoute.get(
   "/get-blog-by-user-id/:userId",
-  tokenAuthHandler,
   getBlogsByUserId
 );
 
 blogRoute.get(
   "/get-blog-by-category-id/:categoryId",
-  tokenAuthHandler,
   getBlogsByCategoryId
 );
 
-blogRoute.get("/get-blog-by-id/:blogId", tokenAuthHandler, getBlogById);
+blogRoute.get("/get-blog-by-id/:blogId", getBlogById);
 
 blogRoute.put(
   "/update-blog-by-id/:blogId",
@@ -74,11 +72,10 @@ blogRoute.post("/unlike-blog/:blogId", tokenAuthHandler, unlikeBlog);
 // route for get like count
 blogRoute.get(
   "/get-blog-like-count/:blogId",
-  tokenAuthHandler,
   getBlogLikeCount
 );
 //get blog comments
-blogRoute.get("/get-blog-comments/:blogId", tokenAuthHandler, getBlogComments);
+blogRoute.get("/get-blog-comments/:blogId", getBlogComments);
 // comment to blog
 blogRoute.post("/comment-blog/:blogId", tokenAuthHandler, commentOnBlog);
 

@@ -9,6 +9,8 @@ import { createId } from "../service/idGenerator/idGenerator";
 import { validation } from "../service/schemaValidetionService/schemaValidetionService";
 import { Blog, BlogComment } from "../types/types";
 
+const baseUrl = process.env.BASE_URL
+
 export const createBlogService = async (blogData: Blog): Promise<void> => {
   // Validate the blog data
   // check all input data with schema validation in Joi
@@ -56,9 +58,38 @@ export const createBlogService = async (blogData: Blog): Promise<void> => {
 };
 
 // this function retrieves all blog posts
+// export const getAllBlogsService = async (): Promise<Blog[]> => {
+//   const query = `
+//     SELECT * FROM blogs
+//   `;
+
+//   try {
+//     const result = await pool.query(query);
+//     return result.rows;
+//   } catch (error) {
+//     console.error("Error retrieving blogs:", error);
+//     throw new Error("Error retrieving blogs");
+//   }
+// };
 export const getAllBlogsService = async (): Promise<Blog[]> => {
+
   const query = `
-    SELECT * FROM blogs
+    SELECT 
+      id,
+      event_category_id,
+      blog_name,
+      '${baseUrl}/' || banner_img_url AS banner_img_url,
+      '${baseUrl}/' || blog_img_url AS blog_img_url,
+      blog_video_link,
+      youtube_link,
+      facebook_link,
+      instagram_link,
+      pinterest_link,
+      twitter_link,
+      blog_content,
+      author_id,
+      created_at
+    FROM blogs
   `;
 
   try {
@@ -69,6 +100,7 @@ export const getAllBlogsService = async (): Promise<Blog[]> => {
     throw new Error("Error retrieving blogs");
   }
 };
+
 
 // This function retrieves blogs by user ID
 export const getBlogsByUserIdService = async (

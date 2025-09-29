@@ -7,6 +7,7 @@ import { productConstants } from "../../constants/productConstants";
 
 export const userRegistrationSchema = Joi.object({
   fullName: Joi.string().min(3).max(100).required().label("Name"),
+  beta_code: Joi.string().required().label("Beta Code"),
   email: Joi.string()
     .required()
     .regex(
