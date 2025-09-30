@@ -65,6 +65,7 @@ export const finishPasskeyRegistration = async (
     const expectedChallenge = registrationChallenges.get(
       (req as any).sessionID
     );
+    
     if (!expectedChallenge) {
       return res.status(400).json({ error: "No registration session found" });
     }
@@ -75,6 +76,9 @@ export const finishPasskeyRegistration = async (
       attestationResponse,
       expectedChallenge
     );
+
+    console.log(verification);
+    
 
     // Clean up the challenge
     registrationChallenges.delete((req as any).sessionID);
@@ -148,7 +152,6 @@ export const finishPasskeyAuthentication = async (
       authenticationResponse.rawId,
       "utf8"
     ).toString("base64");
-    console.log("Credential ID:", credentialID);
 
     // Find the passkey in database
     const passkeyResult = await pool.query(
@@ -170,7 +173,7 @@ export const finishPasskeyAuthentication = async (
       passkey.counter
     );
 
-    if (!verification.verified) {
+    if (!verification || !verification.verified) {
       return res
         .status(400)
         .json({ error: "Authentication verification failed" });
