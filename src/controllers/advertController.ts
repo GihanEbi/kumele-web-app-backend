@@ -80,12 +80,11 @@ export const createAdvert = async (
       advert: newAdvert,
     });
   } catch (err: any) {
-    console.log(err);
 
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Advert creation failed",
     });
     next(err);
   }

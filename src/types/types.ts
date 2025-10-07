@@ -93,10 +93,12 @@ export interface DeleteAccount {
   password: string;
 }
 
-// create hobby
+// create event category
 export interface CreateEventCategory {
   name: string;
   svg_code: string;
+  icon_dark_img_url?: string;
+  icon_light_img_url?: string;
 }
 
 // user event categories

@@ -113,11 +113,11 @@ export const createEvent = async (
       message: "Event created successfully.",
       event: newEvent,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Event creation failed",
-      error: err,
+      message: err.message || "Failed to create event.",
     });
     next(err);
   }
@@ -137,11 +137,11 @@ export const getAllEvents = async (
       success: true,
       data: events,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to retrieve events",
-      error: err,
+      message: err.message || "Failed to retrieve events.",
     });
     next(err);
   }
@@ -160,11 +160,11 @@ export const getEventByUserID = async (
       success: true,
       data: events,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to retrieve events",
-      error: err,
+      message: err.message || "Failed to retrieve events.",
     });
     next(err);
   }
@@ -183,11 +183,11 @@ export const getEventByCategoryID = async (
       success: true,
       data: events,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to retrieve events",
-      error: err,
+      message: err.message || "Failed to retrieve events.",
     });
     next(err);
   }
@@ -206,11 +206,11 @@ export const getEventById = async (
       success: true,
       data: events,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to retrieve event",
-      error: err,
+      message: err.message || "Failed to retrieve event.",
     });
     next(err);
   }
@@ -262,11 +262,11 @@ export const updateEvent = async (
       success: true,
       data: updatedEvent,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to update event",
-      error: err,
+      message: err.message || "Failed to update event.",
     });
     next(err);
   }

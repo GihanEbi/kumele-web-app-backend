@@ -41,11 +41,11 @@ export const registerUser = async (
       message: "User registered successfully",
       data: user,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "User registration failed",
-      error: err,
+      message: err.message || "Failed to create user.",
     });
     next(err);
   }
@@ -684,4 +684,3 @@ export const getUserDataByUserId = async (
     next(err);
   }
 };
-

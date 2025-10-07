@@ -38,9 +38,12 @@ export const startPasskeyRegistration = async (req: Request, res: Response) => {
       message: "Passkey created successfully",
       data: options,
     });
-  } catch (error) {
-    console.error("Start registration error:", error);
-    res.status(500).json({ error: "Failed to start passkey registration" });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to start passkey registration.",
+    });
   }
 };
 
@@ -65,7 +68,7 @@ export const finishPasskeyRegistration = async (
     const expectedChallenge = registrationChallenges.get(
       (req as any).sessionID
     );
-    
+
     if (!expectedChallenge) {
       return res.status(400).json({ error: "No registration session found" });
     }
@@ -78,7 +81,6 @@ export const finishPasskeyRegistration = async (
     );
 
     console.log(verification);
-    
 
     // Clean up the challenge
     registrationChallenges.delete((req as any).sessionID);
@@ -91,9 +93,12 @@ export const finishPasskeyRegistration = async (
       success: true,
       message: "Passkey registered successfully",
     });
-  } catch (error) {
-    console.error("Finish registration error:", error);
-    res.status(500).json({ error: "Failed to complete passkey registration" });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to complete passkey registration.",
+    });
   }
 };
 
@@ -115,9 +120,12 @@ export const startPasskeyAuthentication = async (
       message: "Passkey authentication started successfully",
       data: options,
     });
-  } catch (error) {
-    console.error("Start authentication error:", error);
-    res.status(500).json({ error: "Failed to start passkey authentication" });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to start passkey authentication.",
+    });
   }
 };
 
@@ -205,10 +213,11 @@ export const finishPasskeyAuthentication = async (
       user,
       token,
     });
-  } catch (error) {
-    console.error("Finish authentication error:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to complete passkey authentication" });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to complete passkey authentication.",
+    });
   }
 };

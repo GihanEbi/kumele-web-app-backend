@@ -129,6 +129,14 @@ export const deleteAccountSchema = Joi.object({
 export const createEventCategorySchema = Joi.object({
   name: Joi.string().required().label("Hobby Name"),
   svg_code: Joi.string().required().label("SVG Code"),
+  icon_dark_img_url: Joi.string()
+    .optional()
+    .empty("")
+    .label("Icon Dark Image URL"),
+  icon_light_img_url: Joi.string()
+    .optional()
+    .empty("")
+    .label("Icon Light Image URL"),
 });
 
 // user event categories schema

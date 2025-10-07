@@ -80,7 +80,7 @@ export const updateBannerImg = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Banner image update failed",
     });
     next(err);
   }
@@ -123,7 +123,7 @@ export const createBlog = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Blog creation failed",
     });
     next(err);
   }
@@ -145,7 +145,7 @@ export const getAllBlogs = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Blog retrieval failed",
     });
     next(err);
   }
@@ -168,7 +168,7 @@ export const getBlogsByUserId = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Blog retrieval failed",
     });
     next(err);
   }
@@ -191,7 +191,7 @@ export const getBlogsByCategoryId = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Blog retrieval failed",
     });
     next(err);
   }
@@ -214,7 +214,7 @@ export const getBlogById = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Blog retrieval failed",
     });
     next(err);
   }
@@ -272,7 +272,7 @@ export const updateBlogById = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Blog update failed",
     });
     next(err);
   }
@@ -295,7 +295,7 @@ export const getBlogLikeCount = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Like count retrieval failed",
     });
     next(err);
   }
@@ -320,7 +320,7 @@ export const likeBlog = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Blog like failed",
     });
     next(err);
   }
@@ -345,7 +345,7 @@ export const unlikeBlog = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Blog unlike failed",
     });
     next(err);
   }
@@ -368,7 +368,7 @@ export const getBlogComments = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Blog comments retrieval failed",
     });
     next(err);
   }
@@ -395,7 +395,7 @@ export const commentOnBlog = async (
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      message: err.message || "Login failed",
+      message: err.message || "Blog comment creation failed",
     });
     next(err);
   }

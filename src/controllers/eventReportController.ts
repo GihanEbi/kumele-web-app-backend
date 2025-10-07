@@ -21,13 +21,13 @@ export const getEventReportReasonsController = (
       message: "Event report reasons fetched successfully",
       data: reasons,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "User event creation failed",
-      error: error,
+      message: err.message || "Failed to fetch event report reasons.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -51,13 +51,13 @@ export const createEventReportController = async (
       message: "Event report created successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Event report creation failed",
-      error: error,
+      message: err.message || "Failed to create event report.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -74,13 +74,13 @@ export const getAllEventReportsController = async (
       message: "Event reports fetched successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to fetch event reports",
-      error: error,
+      message: err.message || "Failed to fetch event reports.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -98,13 +98,13 @@ export const getEventReportsByEventIdController = async (
       message: "Event reports fetched successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to fetch event reports",
-      error: error,
+      message: err.message || "Failed to fetch event reports by event ID.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -122,12 +122,12 @@ export const getEventReportsByUserIdController = async (
       message: "Event reports fetched successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to fetch event reports",
-      error: error,
+      message: err.message || "Failed to fetch event reports by user ID.",
     });
-    next(error);
+    next(err);
   }
 };

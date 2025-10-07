@@ -31,13 +31,13 @@ export const createEventHostRatingController = async (
       message: "Rating created successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "User event creation failed",
-      error: error,
+      message: err.message || "Failed to create event host rating.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -55,13 +55,13 @@ export const getEventAverageRatingController = async (
       message: "Event average rating retrieved successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to retrieve event average rating",
-      error: error,
+      message: err.message || "Failed to retrieve event average rating.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -79,13 +79,13 @@ export const getEventRatingsController = async (
       message: "Event ratings retrieved successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to retrieve event ratings",
-      error: error,
+      message: err.message || "Failed to retrieve event ratings.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -103,13 +103,13 @@ export const getUserGivenRatingsController = async (
       message: "User given ratings retrieved successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to retrieve user given ratings",
-      error: error,
+      message: err.message || "Failed to retrieve user given ratings.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -127,13 +127,13 @@ export const getHostReceivedRatingsController = async (
       message: "Host received ratings retrieved successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to retrieve host received ratings",
-      error: error,
+      message: err.message || "Failed to retrieve host received ratings.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -151,12 +151,12 @@ export const getHostRatingsController = async (
       message: "Host ratings retrieved successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Failed to retrieve host ratings",
-      error: error,
+      message: err.message || "Failed to retrieve host ratings.",
     });
-    next(error);
+    next(err);
   }
 };
