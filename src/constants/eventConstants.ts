@@ -10,7 +10,8 @@ export class EventConstants {
   static userEventStatus = {
     PENDING: "PENDING",
     CONFIRMED: "CONFIRMED",
-    CANCELLED: "CANCELLED"
+    CANCELLED: "CANCELLED",
+    CHECKED_IN: "CHECKED_IN",
   };
 
   // event report reasons

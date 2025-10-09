@@ -150,7 +150,7 @@ export const getEventByCategoryIDService = async (
 
 // This function retrieves an event by its ID
 export const getEventByIdService = async (
-  eventId: string
+  eventId: string, userId: string
 ): Promise<EventCategory> => {
   // check if eventId is provided
   if (!eventId) {
@@ -182,6 +182,7 @@ export const getEventByIdService = async (
     e.price,
     e.created_at,
     ($2 || REPLACE(e.event_image_url, '\\', '/')) AS event_image_url,
+    $3 AS logged_in_user_id, 
 
     -- host details with following count + average rating
     jsonb_build_object(
@@ -208,7 +209,8 @@ export const getEventByIdService = async (
         jsonb_build_object(
           'id', uu.id,
           'username', uu.username,
-          'profilePicture', $2 || REPLACE(uu."profilepicture", '\\', '/')
+          'profilePicture', $2 || REPLACE(uu."profilepicture", '\\', '/'),
+          'status', ue.status
         )
       )
       FROM user_event ue
@@ -220,7 +222,7 @@ export const getEventByIdService = async (
   JOIN users u ON e.user_id = u.id
   WHERE e.id = $1
   `,
-      [eventId, baseUrl.endsWith("/") ? baseUrl : baseUrl + "/"]
+      [eventId, baseUrl.endsWith("/") ? baseUrl : baseUrl + "/", userId]
     );
 
     if (result.rows.length === 0) {

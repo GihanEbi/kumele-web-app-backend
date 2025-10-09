@@ -201,7 +201,8 @@ export const getEventById = async (
 ) => {
   try {
     const eventId = req.params.eventId;
-    const events = await getEventByIdService(eventId);
+    const userId = req.UserID;
+    const events = await getEventByIdService(eventId, userId);
     res.status(200).json({
       success: true,
       data: events,
@@ -223,6 +224,7 @@ export const updateEvent = async (
   next: NextFunction
 ) => {
   try {
+    const userId = req.UserID;
     const eventId = req.params.eventId;
     const eventData = req.body;
 
@@ -247,7 +249,7 @@ export const updateEvent = async (
     }
     req.body.event_image_url = req.file.path;
     // 3. (Optional but Recommended) Delete the old image path
-    const oldEvent = await getEventByIdService(eventId);
+    const oldEvent = await getEventByIdService(eventId, userId);
     if (oldEvent && oldEvent.event_image_url) {
       // Delete the old image file from the server
       fs.unlink(oldEvent.event_image_url, (err) => {
