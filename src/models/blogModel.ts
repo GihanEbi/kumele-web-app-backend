@@ -74,23 +74,25 @@ export const createBlogService = async (blogData: Blog): Promise<void> => {
 export const getAllBlogsService = async (): Promise<Blog[]> => {
 
   const query = `
-    SELECT 
-      id,
-      event_category_id,
-      blog_name,
-      '${baseUrl}/' || banner_img_url AS banner_img_url,
-      '${baseUrl}/' || blog_img_url AS blog_img_url,
-      blog_video_link,
-      youtube_link,
-      facebook_link,
-      instagram_link,
-      pinterest_link,
-      twitter_link,
-      blog_content,
-      author_id,
-      created_at
-    FROM blogs
-  `;
+  SELECT 
+    b.id,
+    b.event_category_id,
+    b.blog_name,
+    '${baseUrl}/' || b.banner_img_url AS banner_img_url,
+    '${baseUrl}/' || b.blog_img_url AS blog_img_url,
+    b.blog_video_link,
+    b.youtube_link,
+    b.facebook_link,
+    b.instagram_link,
+    b.pinterest_link,
+    b.twitter_link,
+    b.blog_content,
+    b.author_id,
+    u.username AS author_name,  -- 👈 fetch author_name from users table
+    b.created_at
+  FROM blogs b
+  LEFT JOIN users u ON b.author_id = u.id
+`;
 
   try {
     const result = await pool.query(query);
