@@ -19,7 +19,7 @@ eventCategoryRouter.post(
 );
 eventCategoryRouter.get(
   "/get-event-categories",
-  tokenAuthHandler,
+  // tokenAuthHandler,
   getEventCategories
 );
 
