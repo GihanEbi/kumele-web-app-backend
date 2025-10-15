@@ -77,7 +77,9 @@ import followingFollowerRouter from "./routes/followingFollowerRoutes";
 import createFollowingFollowerTable from "./data/createFollowingFollowerTable";
 import createUserBetaCodeTable from "./data/createUserBetaCodeTable";
 import cryptoPaymentRouter from "./routes/cryptoPaymentRoutes";
-import createCryptoPaymentsTable from "./data/createCryptoPaymentsTable";
+import createPlisioPaymentsTable from "./data/createPlisioPaymentsTable";
+import languageContentRoute from "./routes/languageContentRoute";
+import plisioPaymentRouter from "./routes/plisioPaymentRouter";
 
 const PORT = process.env.PORT || 5001; // Your defined port
 
@@ -171,7 +173,8 @@ app.use("/api/user-events", userEventRoutes);
 app.use("/api/event-host-ratings", eventHostRatingRoutes);
 app.use("/api/event-reports", eventReportRouter);
 app.use("/api/following-follower", followingFollowerRouter);
-app.use("/api/crypto", cryptoPaymentRouter); 
+app.use("/api/language-content", languageContentRoute);
+app.use("/api/plisio-payments", plisioPaymentRouter);
 
 // Error handling middleware (place this after all routes)
 app.use(errorHandler); // <-- Move this after all routes
@@ -218,7 +221,7 @@ createEventHostRatingTable();
 createEventReportTable();
 createFollowingFollowerTable();
 createUserBetaCodeTable();
-createCryptoPaymentsTable(); 
+createPlisioPaymentsTable();
 
 // CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
 // server.listen(PORT, () => {
