@@ -215,7 +215,8 @@ export const getEventByIdService = async (
       )
       FROM user_event ue
       JOIN users uu ON ue.user_id = uu.id
-      WHERE ue.event_id = e.id AND ue.status = 'CONFIRMED'
+      -- WHERE ue.event_id = e.id AND ue.status = 'CONFIRMED'
+      WHERE ue.event_id = e.id AND ue.status IN ('CONFIRMED', 'CHECKED_IN')
     ) AS participants
 
   FROM events e

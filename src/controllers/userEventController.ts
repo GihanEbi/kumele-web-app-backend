@@ -8,6 +8,7 @@ import {
   getCancelledUserEventsByUserIdService,
   getConfirmedUserEventsByUserIdService,
   getPendingUserEventsByUserIdService,
+  checkInUserEventService,
 } from "../models/userEventModel";
 
 // controller for create user event
@@ -25,13 +26,13 @@ export const createUserEventController = async (
       message: "User event created successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  }  catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "User event creation failed",
-      error: error,
+      message: err.message || "Failed to create user event.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -49,13 +50,38 @@ export const acceptUserEventController = async (
       message: "User event accepted successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "User event acceptance failed",
-      error: error,
+      message: err.message || "Failed to accept user events.",
     });
-    next(error);
+    next(err);
+  }
+};
+
+// controller for check in user event
+export const checkInUserEventController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userEventId = req.params.userEventId;
+  const checkedInBy = req.UserID;
+  try {
+    const result = await checkInUserEventService(userEventId, checkedInBy);
+    res.status(200).json({
+      success: true,
+      message: "User event checked in successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to check in user event.",
+    });
+    next(err);
   }
 };
 
@@ -73,13 +99,13 @@ export const cancelUserEventController = async (
       message: "User event cancelled successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  }  catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "User event cancellation failed",
-      error: error,
+      message: err.message || "Failed to cancel user event.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -98,13 +124,13 @@ export const getAllUserEventsByEventIdController = async (
       message: "User events retrieved successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "User events retrieval failed",
-      error: error,
+      message: err.message || "Failed to retrieve user events.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -121,13 +147,13 @@ export const getAllUserEventsController = async (
       message: "User events retrieved successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  }  catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "User events retrieval failed",
-      error: error,
+      message: err.message || "Failed to retrieve user events.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -142,16 +168,16 @@ export const getCancelledUserEventsByUserIdController = async (
     const result = await getCancelledUserEventsByUserIdService(userId);
     res.status(200).json({
       success: true,
-      message: "Cancelled user events retrieved successfully",
+      message: "Cancelled user events successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Cancelled user events retrieval failed",
-      error: error,
+      message: err.message || "Failed to cancel user events.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -169,13 +195,13 @@ export const getConfirmedUserEventsByUserIdController = async (
       message: "Confirmed user events retrieved successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  }  catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Confirmed user events retrieval failed",
-      error: error,
+      message: err.message || "Failed to retrieve user events.",
     });
-    next(error);
+    next(err);
   }
 };
 
@@ -193,12 +219,12 @@ export const getPendingUserEventsByUserIdController = async (
       message: "Pending user events retrieved successfully",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
+  }  catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
       success: false,
-      message: "Pending user events retrieval failed",
-      error: error,
+      message: err.message || "Failed to retrieve user events.",
     });
-    next(error);
+    next(err);
   }
 };

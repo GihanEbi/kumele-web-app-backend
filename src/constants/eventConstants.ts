@@ -14,6 +14,12 @@ export class EventConstants {
     CHECKED_IN: "CHECKED_IN",
   };
 
+  // user event checked in by
+  static userEventCheckedInBy = {
+    HOST: "HOST",
+    SELF: "SELF",
+  };
+
   // event report reasons
   static eventReportReasons = {
     racist : "RACIST",

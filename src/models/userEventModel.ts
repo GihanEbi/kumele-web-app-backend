@@ -69,6 +69,61 @@ export const acceptUserEventService = async (userEventId: string) => {
   }
 };
 
+// check in to the event (update status to CHECKED_IN)
+export const checkInUserEventService = async (
+  userEventId: string,
+  checkedInBy: string
+) => {
+  // check if userEventId is provided
+  if (!userEventId) {
+    return Promise.reject(new Error("User Event ID is required"));
+  }
+  // check if the user event exists
+  const userEventCheck = await pool.query(
+    `SELECT * FROM user_event WHERE id = $1`,
+    [userEventId]
+  );
+  if (userEventCheck.rows.length === 0) {
+    return Promise.reject(new Error("User Event not found"));
+  }
+
+  // only host and self users cn change this
+  let checkedInByUser = "";
+  // check this checkedInBy is user_id of the event
+  // get user_id from userEventCheck and compare with checkedInBy
+  const userEventData = userEventCheck.rows[0];
+  if (userEventData.user_id === checkedInBy) {
+    checkedInByUser = EventConstants.userEventCheckedInBy.SELF;
+  } else {
+    // find the event details and get the host user id
+    const eventDetails = await pool.query(
+      `SELECT * FROM events WHERE id = $1`,
+      [userEventData.event_id]
+    );
+    if (eventDetails.rows.length === 0) {
+      return Promise.reject(new Error("Event not found"));
+    }
+    const eventData = eventDetails.rows[0];
+    if (eventData.user_id === checkedInBy) {
+      checkedInByUser = EventConstants.userEventCheckedInBy.HOST;
+    } else {
+      console.error("You are not host or self to check in this event");
+      return Promise.reject(new Error("Unauthorized"));
+    }
+  }
+
+  try {
+    const result = await pool.query(
+      `UPDATE user_event SET status = $1, checked_in_by = $2, check_in_time = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *`,
+      [EventConstants.userEventStatus.CHECKED_IN, checkedInByUser, userEventId]
+    );
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error checking in user event:", error);
+    throw new Error("Error checking in user event");
+  }
+};
+
 // function to cancel user event (update status to CANCELLED)
 export const cancelUserEventService = async (userEventId: string) => {
   // check if userEventId is provided

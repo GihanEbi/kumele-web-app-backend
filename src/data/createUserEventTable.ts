@@ -7,6 +7,8 @@ const createUserEventTable = async () => {
             user_id VARCHAR(10) NOT NULL,
             event_id VARCHAR(10) NOT NULL,
             status VARCHAR(20) NOT NULL DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'CONFIRMED', 'CANCELLED', 'CHECKED_IN')),
+            checked_in_by VARCHAR(10) CHECK (checked_in_by IN ('HOST', 'SELF')),
+            check_in_time TIMESTAMP,
             FOREIGN KEY (event_id) REFERENCES events(id),
             FOREIGN KEY (user_id) REFERENCES users(id),
             registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

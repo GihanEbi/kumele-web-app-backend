@@ -714,19 +714,18 @@ export const getUserDataService = async (userId: string): Promise<User> => {
     }
 
     // replace profilepicture path by imagePath.replace(/\\/g, "/")
-
-    if (result.rows[0].profilepicture) {
-      result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`;
-    }
-
-    if (
-      result.rows[0].auth_provider !== "local" &&
-      result.rows[0].profilepicture
-    ) {
-      result.rows[0].profilepicture = result.rows[0].profilepicture.replace(
-        /\\/g,
-        "/"
-      );
+    // first check if this local auth or google auth
+    if (result.rows[0].auth_provider !== "local") {
+      if (result.rows[0].profilepicture) {
+        result.rows[0].profilepicture = result.rows[0].profilepicture.replace(
+          /\\/g,
+          "/"
+        );
+      }
+    } else {
+      if (result.rows[0].profilepicture) {
+        result.rows[0].profilepicture = `${systemConfig.baseUrl}/${result.rows[0].profilepicture}`;
+      }
     }
 
     // remove user password field in result

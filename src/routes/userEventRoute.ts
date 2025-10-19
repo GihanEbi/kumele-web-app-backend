@@ -8,6 +8,7 @@ import {
   getCancelledUserEventsByUserIdController,
   getConfirmedUserEventsByUserIdController,
   getPendingUserEventsByUserIdController,
+  checkInUserEventController,
 } from "../controllers/userEventController";
 
 import { tokenAuthHandler } from "../middlewares/tokenAuthHandler";
@@ -22,6 +23,12 @@ userEventRoutes.put(
   "/accept-user-event/:userEventId",
   tokenAuthHandler,
   acceptUserEventController
+);
+
+userEventRoutes.put(
+  "/check-in-user-event/:userEventId",
+  tokenAuthHandler,
+  checkInUserEventController
 );
 
 userEventRoutes.put(
