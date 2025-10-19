@@ -207,6 +207,7 @@ export const getEventByIdService = async (
     (
       SELECT jsonb_agg(
         jsonb_build_object(
+          'user_event_id', ue.id,
           'id', uu.id,
           'username', uu.username,
           'profilePicture', $2 || REPLACE(uu."profilepicture", '\\', '/'),
