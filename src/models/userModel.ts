@@ -1075,3 +1075,41 @@ export const getAllUsersService = async (currentUserId: string) => {
     throw error;
   }
 };
+
+// update user location
+// export const updateUserLocationService = async (
+//   userId: string,
+//   latitude: number,
+//   longitude: number
+// ): Promise<void> => {
+//   try {
+//     await pool.query(
+//       "UPDATE users SET location = ST_SetSRID(ST_MakePoint($1, $2), 4326) WHERE ID = $3",
+//       [longitude, latitude, userId]
+//     );
+//   } catch (error) {
+//     console.error("Error in updateUserLocationService model:", error);
+//     throw error;
+//   }
+// };
+
+export const updateUserLocationService = async (
+  userId: string,
+  latitude: number,
+  longitude: number
+): Promise<void> => {
+  try {
+    // Validate inputs
+    if (latitude < -90 || latitude > 90) throw new Error("Invalid latitude");
+    if (longitude < -180 || longitude > 180) throw new Error("Invalid longitude");
+
+    await pool.query(
+      "UPDATE users SET location = ST_SetSRID(ST_MakePoint($1, $2), 4326) WHERE ID = $3",
+      [longitude, latitude, userId]  // PostGIS: longitude first
+    );
+  } catch (error) {
+    console.error("Error in updateUserLocationService model:", error);
+    throw error;
+  }
+};
+

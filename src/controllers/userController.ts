@@ -21,6 +21,7 @@ import {
   resetPasswordService,
   completeGoogleSignupService,
   getUserByIdService,
+  updateUserLocationService,
 } from "../models/userModel";
 import { pool } from "../config/db";
 import fs from "fs";
@@ -680,6 +681,38 @@ export const getUserDataByUserId = async (
     res.status(statusCode).json({
       success: false,
       message: err.message || "Failed to retrieve user data.",
+    });
+    next(err);
+  }
+};
+
+// update user location
+export const updateUserLocation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.UserID;
+    const { longitude, latitude } = req.body;
+    // check location provided
+    if (!longitude || !latitude) {
+      return res.status(400).json({
+        success: false,
+        message: "Location is required.",
+      });
+    }
+    await updateUserLocationService(userId, latitude, longitude);
+
+    res.status(200).json({
+      success: true,
+      message: "User location updated successfully.",
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to update user location.",
     });
     next(err);
   }

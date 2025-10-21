@@ -23,6 +23,7 @@ const createUserTable = async () => {
       qr_code_url TEXT,
       reset_password_token TEXT,
       reset_password_expires TIMESTAMP,
+      location GEOGRAPHY(POINT, 4326),
       auth_provider VARCHAR(20) NOT NULL CHECK (auth_provider IN ('local', 'google', 'facebook')) DEFAULT 'local',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )

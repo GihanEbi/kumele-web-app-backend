@@ -26,7 +26,7 @@ export const createUserEventController = async (
       message: "User event created successfully",
       data: result,
     });
-  }  catch (err: any) {
+  } catch (err: any) {
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
@@ -99,7 +99,7 @@ export const cancelUserEventController = async (
       message: "User event cancelled successfully",
       data: result,
     });
-  }  catch (err: any) {
+  } catch (err: any) {
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
@@ -147,7 +147,7 @@ export const getAllUserEventsController = async (
       message: "User events retrieved successfully",
       data: result,
     });
-  }  catch (err: any) {
+  } catch (err: any) {
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
@@ -195,7 +195,7 @@ export const getConfirmedUserEventsByUserIdController = async (
       message: "Confirmed user events retrieved successfully",
       data: result,
     });
-  }  catch (err: any) {
+  } catch (err: any) {
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
@@ -219,7 +219,7 @@ export const getPendingUserEventsByUserIdController = async (
       message: "Pending user events retrieved successfully",
       data: result,
     });
-  }  catch (err: any) {
+  } catch (err: any) {
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,

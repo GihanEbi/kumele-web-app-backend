@@ -10,6 +10,7 @@ import {
   getEventById,
   getEventByUserID,
   updateEvent,
+  userAvailabilityController,
 } from "../controllers/eventController";
 
 const eventRoutes = Router();
@@ -39,6 +40,12 @@ eventRoutes.put(
   tokenAuthHandler,
   dynamicUpload.single("event_image"),
   updateEvent
+);
+
+eventRoutes.post(
+  "/check-user-availability",
+  tokenAuthHandler,
+  userAvailabilityController
 );
 
 export default eventRoutes;

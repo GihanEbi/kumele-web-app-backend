@@ -21,6 +21,7 @@ import {
   updateUserPermissions,
   uploadUserProfile,
   verifyTwoFactorAuthentication,
+  updateUserLocation,
 } from "../controllers/userController";
 import { tokenAuthHandler } from "../middlewares/tokenAuthHandler";
 
@@ -83,6 +84,13 @@ userRoutes.get(
   tokenAuthHandler,
   getUserEventCategories
 );
-userRoutes.get("/get-user-by-id/:userId", tokenAuthHandler, getUserDataByUserId);
+userRoutes.get(
+  "/get-user-by-id/:userId",
+  tokenAuthHandler,
+  getUserDataByUserId
+);
+
+// New route for updating user location
+userRoutes.put("/update-location", tokenAuthHandler, updateUserLocation);
 
 export default userRoutes;

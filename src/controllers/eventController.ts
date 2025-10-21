@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import {
+  checkUserAvailabilityForEventService,
   createEventService,
   getAllEventsService,
   getEventByCategoryIDService,
@@ -269,6 +270,44 @@ export const updateEvent = async (
     res.status(statusCode).json({
       success: false,
       message: err.message || "Failed to update event.",
+    });
+    next(err);
+  }
+};
+
+
+
+// check user availability
+export const userAvailabilityController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { longitude, latitude } = req.body;
+  
+  
+  // check location provided
+  if (!longitude || !latitude) {
+    return res.status(400).json({
+      success: false,
+      message: "Location is required.",
+    });
+  }
+  try {
+    const result = await checkUserAvailabilityForEventService(
+      latitude,
+      longitude
+    );
+    res.status(200).json({
+      success: true,
+      message: "User availability checked successfully",
+      data: result.nearby_users,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Failed to check user availability.",
     });
     next(err);
   }

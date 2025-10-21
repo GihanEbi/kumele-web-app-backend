@@ -150,7 +150,8 @@ export const getEventByCategoryIDService = async (
 
 // This function retrieves an event by its ID
 export const getEventByIdService = async (
-  eventId: string, userId: string
+  eventId: string,
+  userId: string
 ): Promise<EventCategory> => {
   // check if eventId is provided
   if (!eventId) {
@@ -273,5 +274,67 @@ export const updateEventByIdService = async (
   } catch (error) {
     console.error("Error updating event by ID:", error);
     throw new Error("Error updating event by ID");
+  }
+};
+
+// check user availability for an event
+// export const checkUserAvailabilityForEventService = async (
+//   latitude: number | string,
+//   longitude: number | string
+// ) => {
+//   // check if latitude and longitude are provided
+//   if (latitude === undefined || longitude === undefined) {
+//     return Promise.reject(new Error("Latitude and Longitude are required"));
+//   }
+//   const lat = parseFloat(latitude as string);
+//   const lon = parseFloat(longitude as string);
+//   try {
+//     const result = await pool.query(
+//       "SELECT COUNT(*) AS nearby_users FROM users WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 2000)",
+//       [lon, lat]
+//     );
+
+//     return result.rows[0].nearby_users;
+//   } catch (error) {
+//     console.error("Error checking user availability for event:", error);
+//     throw new Error("Error checking user availability for event");
+//   }
+// };
+
+
+export const checkUserAvailabilityForEventService = async (
+  latitude: number | string,
+  longitude: number | string
+) => {
+  if (latitude === undefined || longitude === undefined) {
+    throw new Error("Latitude and Longitude are required");
+  }
+
+  const lat = parseFloat(latitude as string);
+  const lon = parseFloat(longitude as string);
+
+  try {
+    // ✅ Use geography type directly (no need for ST_SetSRID or ::geography)
+    const result = await pool.query(
+      `
+      SELECT COUNT(*) AS nearby_users
+      FROM users
+      WHERE ST_DWithin(
+        location,                     -- geography column
+        ST_MakePoint($1, $2)::geography,  -- convert to geography point
+        2000                          -- 2000 meters
+      );
+      `,
+      [lon, lat] // longitude first, latitude second
+    );
+
+    return {
+      nearby_users: Number(result.rows[0].nearby_users),
+      latitude: lat,
+      longitude: lon,
+    };
+  } catch (error) {
+    console.error("❌ Error checking user availability for event:", error);
+    throw new Error("Error checking user availability for event");
   }
 };
