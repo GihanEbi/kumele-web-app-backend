@@ -21,8 +21,8 @@ export const createPlisioInvoice = async (req: Request, res: Response) => {
 
     const response = await axios.get("https://api.plisio.net/api/v1/invoices/new", {
       params: {
-        api_key: "QKGNG81CULb_JO6JvIbDn9vZ1c-zhQjJTAlSVIZ9MFUARZn2urErqXZRXRa5gp3T",
-        // api_key: "viR-TIQALxdXhIWqImFFqXZDLs9ERALsQLK9Q61Ur7yJfpWcrCd3mmCDli9mVGdS",
+        // api_key: "QKGNG81CULb_JO6JvIbDn9vZ1c-zhQjJTAlSVIZ9MFUARZn2urErqXZRXRa5gp3T",
+        api_key: "viR-TIQALxdXhIWqImFFqXZDLs9ERALsQLK9Q61Ur7yJfpWcrCd3mmCDli9mVGdS",
         order_name: `Order #${orderId}`,
         order_number: orderId,
         source_currency: currency,
