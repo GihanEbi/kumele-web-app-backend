@@ -337,6 +337,9 @@ export const createAdvertSchema = Joi.object({
   daily_budget: Joi.number().min(0).required().label("Daily Budget"),
   advert_duration: Joi.number().min(0).required().label("Advert Duration"),
   save_template: Joi.boolean().required().label("Save as Template"),
+  stripe_payment_intent_id: Joi.string()
+    .required()
+    .label("Stripe Payment Intent ID"),
 });
 
 // update advert

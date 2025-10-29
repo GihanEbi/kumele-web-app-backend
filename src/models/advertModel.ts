@@ -45,6 +45,12 @@ export const createAdvertService = async ({
     // create advert id
     const advertId = await createId(id_codes.idCode.advert);
 
+    // add new record to advert payment table with advert id and stripe payment intent id
+    await pool.query(
+      `INSERT INTO advert_payments (advert_id, stripe_payment_intent_id) VALUES ($1, $2)`,
+      [advertId, advertData.stripe_payment_intent_id]
+    );
+
     // insert the advert data into the database
     const result = await pool.query(
       `INSERT INTO adverts (
@@ -81,10 +87,52 @@ export const createAdvertService = async ({
         advertData.save_template,
       ]
     );
+
     return result.rows[0];
   } catch (error) {
     console.error("Error creating event:", error);
     throw new Error("Error creating event");
+  }
+};
+
+export const activateAdvertByIdService = async (
+  advertId: string
+): Promise<CreateAdvert | null> => {
+  // check advert id is provided
+  if (!advertId) {
+    return Promise.reject(new Error("Advert ID is required"));
+  }
+  // check if advert exists
+  const advertCheck = await pool.query("SELECT * FROM adverts WHERE id = $1", [
+    advertId,
+  ]);
+  if (advertCheck.rows.length === 0) {
+    return Promise.reject(new Error("Advert not found"));
+  }
+  try {
+    const result = await pool.query(
+      `UPDATE adverts SET is_active = true WHERE id = $1 RETURNING *`,
+      [advertId]
+    );
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error("Error activating advert by ID:", error);
+    throw new Error("Error activating advert by ID");
+  }
+};
+
+export const deactivateAdvertByIdService = async (
+  advertId: string
+): Promise<CreateAdvert | null> => {
+  try {
+    const result = await pool.query(
+      `UPDATE adverts SET is_active = false WHERE id = $1 RETURNING *`,
+      [advertId]
+    );
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error("Error deactivating advert by ID:", error);
+    throw new Error("Error deactivating advert by ID");
   }
 };
 

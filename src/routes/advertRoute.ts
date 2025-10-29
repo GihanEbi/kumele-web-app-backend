@@ -33,6 +33,8 @@ import {
   getAllAdvertPlacementPrices,
   getAdvertPlacementPriceById,
   updateAdvertPlacementPriceById,
+  activateAdvertById,
+  deactivateAdvertById,
 } from "../controllers/advertController";
 
 const advertRoute = Router();
@@ -42,6 +44,16 @@ advertRoute.post(
   tokenAuthHandler,
   dynamicUpload.single("advert_image"),
   createAdvertImage
+);
+advertRoute.post(
+  "/activate-advert-by-id/:advertId",
+  tokenAuthHandler,
+  activateAdvertById
+);
+advertRoute.post(
+  "/deactivate-advert-by-id/:advertId",
+  tokenAuthHandler,
+  deactivateAdvertById
 );
 advertRoute.post("/create-advert", tokenAuthHandler, createAdvert);
 advertRoute.get(
@@ -172,6 +184,5 @@ advertRoute.put(
   tokenAuthHandler,
   updateAdvertPlacementPriceById
 );
-
 
 export default advertRoute;

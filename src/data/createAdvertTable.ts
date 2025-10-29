@@ -31,6 +31,7 @@ const createAdvertTable = async () => {
         daily_budget DECIMAL(10, 2) NOT NULL,
         advert_duration INT NOT NULL,
         save_template BOOLEAN DEFAULT FALSE,
+        is_active BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);

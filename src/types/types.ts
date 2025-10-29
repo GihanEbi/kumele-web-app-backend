@@ -268,6 +268,7 @@ export interface CreateAdvert {
   daily_budget: number;
   advert_duration: number;
   save_template?: boolean;
+  stripe_payment_intent_id: string;
 }
 
 // notification types

@@ -80,6 +80,7 @@ import cryptoPaymentRouter from "./routes/cryptoPaymentRoutes";
 import createPlisioPaymentsTable from "./data/createPlisioPaymentsTable";
 import languageContentRoute from "./routes/languageContentRoute";
 import plisioPaymentRouter from "./routes/plisioPaymentRouter";
+import createAdvertPaymentTable from "./data/createAdvertPaymentTable";
 
 const PORT = process.env.PORT || 5001; // Your defined port
 
@@ -222,6 +223,7 @@ createEventReportTable();
 createFollowingFollowerTable();
 createUserBetaCodeTable();
 createPlisioPaymentsTable();
+createAdvertPaymentTable();
 
 // CHANGE THIS LINE: Listen using the 'server' instance, not 'app'
 // server.listen(PORT, () => {

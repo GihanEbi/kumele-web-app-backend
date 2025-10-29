@@ -27,6 +27,8 @@ import {
   updateAdvertLanguageByIdService,
   updateAdvertPlacementPriceByIdService,
   updateAdvertRegionByIdService,
+  activateAdvertByIdService,
+  deactivateAdvertByIdService,
 } from "../models/advertModel";
 import fs from "fs";
 import { systemConfig } from "../config/systemConfig";
@@ -64,6 +66,67 @@ export const createAdvertImage = async (
   }
 };
 
+// activate advert by id
+export const activateAdvertById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const advertId = req.params.advertId;
+  // check advert id is provided
+  if (!advertId) {
+    return res.status(400).json({
+      success: false,
+      message: "Advert ID is required",
+    });
+  }
+  try {
+    const activatedAdvert = await activateAdvertByIdService(advertId);
+    res.status(200).json({
+      success: true,
+      message: "Advert activated successfully.",
+      data: activatedAdvert,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Error activating advert",
+    });
+    next(err);
+  }
+};
+// deactivate advert by id
+export const deactivateAdvertById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const advertId = req.params.advertId;
+  // check advert id is provided
+  if (!advertId) {
+    return res.status(400).json({
+      success: false,
+      message: "Advert ID is required",
+    });
+  }
+  try {
+    const deactivatedAdvert = await deactivateAdvertByIdService(advertId);
+    res.status(200).json({
+      success: true,
+      message: "Advert deactivated successfully.",
+      data: deactivatedAdvert,
+    });
+  } catch (err: any) {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      message: err.message || "Error deactivating advert",
+    });
+    next(err);
+  }
+};
+
 export const createAdvert = async (
   req: Request,
   res: Response,
@@ -80,7 +143,6 @@ export const createAdvert = async (
       advert: newAdvert,
     });
   } catch (err: any) {
-
     const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
